@@ -24,6 +24,7 @@ class PurchasingResource extends JsonResource
             'user' => $this->user->name,
             'location' => $this->location->loc_name,
             'supplier' => $this->supplier->nama_supplier,
+            'flow_desc' => $this->flow_desc,
             'detail' => $this->purchasingDetail,
         ];
     }

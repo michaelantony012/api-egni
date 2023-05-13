@@ -5,6 +5,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\PurchasingController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\DocumentFlowController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,4 +58,11 @@ Route::controller(PurchasingController::class)->group(function () {
     Route::get('/show-supplier/{id}', 'show');
     Route::post('/update-supplier', 'update');
     Route::get('/destroy-supplier/{id}', 'destroy');
+});
+Route::controller(DocumentFlowController::class)->group(function () {
+    Route::get('/index-documentflow', 'index');
+    Route::post('/create-documentflow', 'create');
+    // Route::get('/show-supplier/{id}', 'show');
+    Route::post('/update-documentflow', 'update');
+    // Route::get('/destroy-supplier/{id}', 'destroy');
 });

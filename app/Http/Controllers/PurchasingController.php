@@ -15,7 +15,11 @@ class PurchasingController extends Controller
      */
     public function index()
     {
-        $data = Purchasing::all();
+        $data = Purchasing::Join('document_flow as b',function($join){
+            $join->on('purchase_invoice_h.doctype_id','b.doctype_id')
+                ->on('purchase_invoice_h.flow_seq','b.doc_flow');
+            })->select('purchase_invoice_h.*','b.flow_desc')
+            ->get();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'data' => PurchasingResource::collection($data),
