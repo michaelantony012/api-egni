@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\PurchasingController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +36,25 @@ Route::controller(SubCategoryController::class)->group(function () {
     Route::get('/show-sub-category/{id}', 'show');
     Route::post('/update-sub-category', 'update');
     Route::get('/destroy-sub-category/{id}', 'destroy');
+});
+Route::controller(SupplierController::class)->group(function () {
+    Route::get('/index-supplier', 'index');
+    Route::post('/create-supplier', 'create');
+    Route::get('/show-supplier/{id}', 'show');
+    Route::post('/update-supplier', 'update');
+    Route::get('/destroy-supplier/{id}', 'destroy');
+});
+Route::controller(LocationController::class)->group(function () {
+    Route::get('/index-location', 'index');
+    Route::post('/create-location', 'create');
+    Route::get('/show-location/{id}', 'show');
+    Route::post('/update-location', 'update');
+    Route::get('/destroy-location/{id}', 'destroy');
+});
+Route::controller(PurchasingController::class)->group(function () {
+    Route::get('/index-purchasing', 'index');
+    Route::post('/create-supplier', 'create');
+    Route::get('/show-supplier/{id}', 'show');
+    Route::post('/update-supplier', 'update');
+    Route::get('/destroy-supplier/{id}', 'destroy');
 });
