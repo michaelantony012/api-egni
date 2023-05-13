@@ -185,4 +185,22 @@ class DocumentFlowController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $data = DocumentFLow::findOrFail($id);
+        return response()->json([
+            'data' => new DocumentFlowResource($data),
+            'message' => 'Data berhasil di dapat'
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $delete = DocumentFlow::destroy($id);
+        return response()->json([
+            'status' => $delete ? true : false,
+            'message' => 'Berhasil'
+        ]);
+    }
+
 }

@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DocFlowController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchasingController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
@@ -51,6 +53,14 @@ Route::controller(LocationController::class)->group(function () {
     Route::get('/show-location/{id}', 'show');
     Route::post('/update-location', 'update');
     Route::get('/destroy-location/{id}', 'destroy');
+});
+Route::controller(ProductController::class)->group(function () {
+    Route::get('/index-product', 'index');
+    Route::get('/index-opt-product', 'optionIndex');
+    Route::post('/create-product', 'create');
+    Route::get('/show-product/{id}', 'show');
+    Route::post('/update-product', 'update');
+    Route::get('/destroy-product/{id}', 'destroy');
 });
 Route::controller(PurchasingController::class)->group(function () {
     Route::get('/index-purchasing', 'index');

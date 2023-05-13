@@ -5,25 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubCategory extends Model
+class Product extends Model
 {
     use HasFactory;
 
-    /*
-    |--------------------------------------------------------------------------
-    | GLOBAL VARIABLES
-    |--------------------------------------------------------------------------
-    */
-
-    protected $table = 'sub_categories';
+    protected $table = 'products';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
+    protected $casts = [
+        'primary_stock' => 'boolean',
+    ];
 
-    /*
+     /*
     |--------------------------------------------------------------------------
     | FUNCTIONS
     |--------------------------------------------------------------------------
@@ -38,10 +35,11 @@ class SubCategory extends Model
     {
         return $this->belongsTo(Category::class);
     }
-    public function product()
+    public function subCategory()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsTo(subCategory::class);
     }
+
 
     /*
     |--------------------------------------------------------------------------
