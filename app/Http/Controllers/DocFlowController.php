@@ -38,7 +38,7 @@ class DocFlowController extends Controller
         foreach ($request->c_document_flow as $item) {
             DocFlow::create($item);
         }
-        foreach ($request->c_document_flow as $item2) {
+        foreach ($request->c_document_flow_logic as $item2) {
 
             DocFlowLogic::create($item2);
         }
@@ -46,7 +46,7 @@ class DocFlowController extends Controller
 
         return response()->json([
             'status' => $create ? true : false,
-            'message' => 'Berhasil'
+            'message' => 'Document Flow berhasil ditambah'
         ]);
     }
 
@@ -85,6 +85,7 @@ class DocFlowController extends Controller
     public function edit(DocFlow $docFlow)
     {
         //
+
     }
 
     /**
@@ -96,13 +97,39 @@ class DocFlowController extends Controller
      */
     public function update(Request $request, DocFlow $docFlow)
     {
-        $updated = DB::table('document_type')
-            ->where('id', $request->id)
-            ->update([
-                'doctype_no' => $request->doctype_no,
-                'doctype_desc' => $request->doctype_desc,
-            ]);
 
+        DB::beginTransaction();
+        $updated = DocType::where('id',$request->u_document_type->id)->update($request->u_document_type);
+
+        //UPDATE DETAIL
+        foreach ($request->u_document_flow as $item) {
+            
+            DocFlow::where('id',$item->id)->update([
+                'doctype_id' => $request->u_document_type->id,
+                'doc_flow' => $item->doc_flow,
+                'flow_desc' => $item->flow_desc
+            ]);
+        }
+
+        foreach ($request->u_document_flow_logic as $item2) {
+            
+            DocFlowLogic::where('id',$item2->id)->update([
+                'doctype_id' => $request->u_document_type->id,
+                'flow_prev' => $item2->flow_prev,
+                'flow_next' => $item2->flow_next,
+                'flow_desc' => $item2->flow_desc
+            ]);
+        }
+
+        //CREATE DETAIL
+        foreach ($request->c_document_flow as $item) {
+            
+            DocFlow::create($item);
+        }
+        foreach ($request->c_document_flow_logic as $item2) {
+
+            DocFlowLogic::create($item2);
+        }
         return response()->json([
             'status' => $updated ? true : false,
             'message' => 'Berhasil'

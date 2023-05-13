@@ -69,10 +69,10 @@ Route::controller(PurchasingController::class)->group(function () {
     Route::post('/update-supplier', 'update');
     Route::get('/destroy-supplier/{id}', 'destroy');
 });
-Route::controller(DocumentFlowController::class)->group(function () {
-    Route::get('/index-documentflow', 'index');
-    Route::post('/create-documentflow', 'create');
-    // Route::get('/show-supplier/{id}', 'show');
-    Route::post('/update-documentflow', 'update');
-    // Route::get('/destroy-supplier/{id}', 'destroy');
+Route::controller(DocFlowController::class)->group(function () {
+    Route::get('/index-document', 'index');
+    Route::post('/create-document', 'create');
+    Route::get('/show-document/{id}', 'show');
+    Route::post('/update-document', 'update');
+    Route::get('/destroy-document/{id}', 'destroy');
 });
