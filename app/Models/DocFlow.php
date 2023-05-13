@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubCategory extends Model
+class DocFlow extends Model
 {
     use HasFactory;
 
@@ -15,11 +15,11 @@ class SubCategory extends Model
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'sub_categories';
+    protected $table = 'document_flow';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
-    protected $guarded = ['id'];
-    // protected $fillable = [];
+    // protected $guarded = ['id'];
+    protected $fillable = ['doctype_id', 'doc_flow', 'flow_desc'];
     // protected $hidden = [];
     // protected $dates = [];
 
@@ -34,14 +34,6 @@ class SubCategory extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-    public function product()
-    {
-        return $this->hasMany(Product::class);
-    }
 
     /*
     |--------------------------------------------------------------------------

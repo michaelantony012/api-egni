@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\LocationResource;
-use App\Models\Location;
+use App\Http\Resources\d_ProductResource;
+use App\Http\Resources\opt_ProductResource;
+use App\Http\Resources\ProductResource;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class LocationController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,10 +18,19 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $data = Location::all();
+        $data = Product::all();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
-            'data' => LocationResource::collection($data),
+            'data' => ProductResource::collection($data),
+            'message' => 'Data berhasil di dapat'
+        ]);
+    }
+    public function optionIndex()
+    {
+        $data = Product::all();
+        return response()->json([
+            'status' => collect($data)->isNotEmpty() ? true : false,
+            'data' => opt_ProductResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }
@@ -31,8 +42,7 @@ class LocationController extends Controller
      */
     public function create(Request $request)
     {
-
-        $create = Location::create($request->all());
+        $create = Product::create($request->all());
         return response()->json([
             'status' => $create ? true : false,
             'message' => 'Berhasil'
@@ -53,14 +63,14 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $data = Location::findOrFail($id);
+        $data = Product::findOrFail($id);
         return response()->json([
-            'data' => new LocationResource($data),
+            'data' => new d_ProductResource($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }
@@ -68,10 +78,10 @@ class LocationController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function edit(Location $location)
+    public function edit(Product $product)
     {
         //
     }
@@ -80,16 +90,23 @@ class LocationController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Location $location)
+    public function update(Request $request, Product $product)
     {
-        $updated = DB::table('locations')
+        $updated = DB::table('products')
             ->where('id', $request->id)
             ->update([
-                'loc_name' => $request->loc_name,
-                'loc_address' => $request->loc_address,
+                'barcode' => $request->barcode,
+                'product_code' => $request->product_code,
+                'product_name' => $request->product_name,
+                'category_id' => $request->category_id,
+                'sub_category_id' => $request->sub_category_id,
+                'product_price' => $request->product_price,
+                'primary_stock' => $request->primary_stock,
+                'qty_count' => $request->qty_count,
+                'join_id' => $request->join_id,
             ]);
 
         return response()->json([
@@ -101,13 +118,12 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        // DB::beginTransaction();
-        $delete = Location::destroy($id);
+        $delete = Product::destroy($id);
         return response()->json([
             'status' => $delete ? true : false,
             'message' => 'Berhasil'

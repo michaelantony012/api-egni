@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\LocationResource;
-use App\Models\Location;
+use App\Http\Resources\DocFlowResource;
+use App\Models\DocFlow;
+use App\Models\DocFlowLogic;
+use App\Models\DocType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class LocationController extends Controller
+class DocFlowController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,10 +18,10 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $data = Location::all();
+        $data = DocFlow::all();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
-            'data' => LocationResource::collection($data),
+            'data' => DocFlowResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }
@@ -31,8 +33,17 @@ class LocationController extends Controller
      */
     public function create(Request $request)
     {
+        DB::beginTransaction();
+        $create = DocType::create($request->document_type);
+        foreach ($request->document_flow as $item) {
+            DocFlow::create($item);
+        }
+        foreach ($request->document_flow as $item2) {
 
-        $create = Location::create($request->all());
+            DocFlowLogic::create($item2);
+        }
+
+
         return response()->json([
             'status' => $create ? true : false,
             'message' => 'Berhasil'
@@ -53,14 +64,14 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\DocFlow  $docFlow
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $data = Location::findOrFail($id);
+        $data = DocFlow::findOrFail($id);
         return response()->json([
-            'data' => new LocationResource($data),
+            'data' => new DocFlowResource($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }
@@ -68,10 +79,10 @@ class LocationController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\DocFlow  $docFlow
      * @return \Illuminate\Http\Response
      */
-    public function edit(Location $location)
+    public function edit(DocFlow $docFlow)
     {
         //
     }
@@ -80,16 +91,16 @@ class LocationController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\DocFlow  $docFlow
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Location $location)
+    public function update(Request $request, DocFlow $docFlow)
     {
-        $updated = DB::table('locations')
+        $updated = DB::table('document_type')
             ->where('id', $request->id)
             ->update([
-                'loc_name' => $request->loc_name,
-                'loc_address' => $request->loc_address,
+                'doctype_no' => $request->doctype_no,
+                'doctype_desc' => $request->doctype_desc,
             ]);
 
         return response()->json([
@@ -101,13 +112,12 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Location  $location
+     * @param  \App\Models\DocFlow  $docFlow
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        // DB::beginTransaction();
-        $delete = Location::destroy($id);
+        $delete = DocFlow::destroy($id);
         return response()->json([
             'status' => $delete ? true : false,
             'message' => 'Berhasil'
