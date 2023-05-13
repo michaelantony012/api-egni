@@ -34,11 +34,11 @@ class DocFlowController extends Controller
     public function create(Request $request)
     {
         DB::beginTransaction();
-        $create = DocType::create($request->document_type);
-        foreach ($request->document_flow as $item) {
+        $create = DocType::create($request->c_document_type);
+        foreach ($request->c_document_flow as $item) {
             DocFlow::create($item);
         }
-        foreach ($request->document_flow as $item2) {
+        foreach ($request->c_document_flow as $item2) {
 
             DocFlowLogic::create($item2);
         }
