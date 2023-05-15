@@ -14,6 +14,14 @@ class DocFlowResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'doctype_no' => $this->doctype_no,
+            'doctype_desc' => $this->doctype_desc,
+            'doc_flow' => $this->doc_flow,
+            'doc_flow_logic' => $this->doc_flow_logic,
+
+        ];
     }
 }

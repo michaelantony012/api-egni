@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DocFlow extends Model
 {
@@ -34,6 +35,10 @@ class DocFlow extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
+    public function doc_type(): BelongsTo
+    {
+        return $this->belongsTo(DocType::class, 'doctype_id');
+    }
 
     /*
     |--------------------------------------------------------------------------
