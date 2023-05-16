@@ -122,14 +122,25 @@ class DocFlowController extends Controller
         }
 
         //CREATE DETAIL
-        // foreach ($request->c_document_flow as $item) {
+        foreach ($request->c_document_flow as $item) {
 
-        //     DocFlow::create($item);
-        // }
-        // foreach ($request->c_document_flow_logic as $item2) {
+            DocFlow::create($item);
+        }
+        foreach ($request->c_document_flow_logic as $item2) {
 
-        //     DocFlowLogic::create($item2);
-        // }
+            DocFlowLogic::create($item2);
+        }
+
+        //DELETE DETAIL
+        foreach ($request->d_document_flow as $item) {
+
+            DocFlow::where('id',$item['id'])->delete();
+        }
+        foreach ($request->d_document_flow_logic as $item2) {
+
+            DocFlowLogic::where('id',$item2['id'])->delete();
+        }
+
         return response()->json([
             'status' => $updated ? true : false,
             'message' => 'Berhasil'
