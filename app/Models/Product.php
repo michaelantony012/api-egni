@@ -39,6 +39,10 @@ class Product extends Model
     {
         return $this->belongsTo(subCategory::class);
     }
+    public function purchasing_detail()
+    {
+        return $this->hasMany(PurchasingDetail::class);
+    }
 
 
     /*

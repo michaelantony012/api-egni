@@ -26,6 +26,10 @@ class PurchasingController extends Controller
             'message' => 'Data berhasil di dapat'
         ]);
     }
+    public function detailIndex($id)
+    {
+        # code...
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -54,9 +58,13 @@ class PurchasingController extends Controller
      * @param  \App\Models\Purchasing  $purchasing
      * @return \Illuminate\Http\Response
      */
-    public function show(Purchasing $purchasing)
+    public function show($id)
     {
-        //
+        $data = Purchasing::findOrFail($id);
+        return response()->json([
+            'data' => new PurchasingResource($data),
+            'message' => 'Data berhasil di dapat'
+        ]);
     }
 
     /**

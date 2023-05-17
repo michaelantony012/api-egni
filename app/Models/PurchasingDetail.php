@@ -48,6 +48,10 @@ class PurchasingDetail extends Model
     {
         return $this->belongsTo(Purchasing::class, 'id_header');
     }
+    public function products(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'id_product');
+    }
 
     /*
     |--------------------------------------------------------------------------

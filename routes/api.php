@@ -64,10 +64,10 @@ Route::controller(ProductController::class)->group(function () {
 });
 Route::controller(PurchasingController::class)->group(function () {
     Route::get('/index-purchasing', 'index');
-    Route::post('/create-supplier', 'create');
-    Route::get('/show-supplier/{id}', 'show');
-    Route::post('/update-supplier', 'update');
-    Route::get('/destroy-supplier/{id}', 'destroy');
+    Route::post('/create-purchasing', 'create');
+    Route::get('/show-purchasing/{id}', 'show');
+    Route::post('/update-purchasing', 'update');
+    Route::get('/destroy-purchasing/{id}', 'destroy');
 });
 Route::controller(DocFlowController::class)->group(function () {
     Route::get('/index-document', 'index');
