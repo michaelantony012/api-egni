@@ -8,6 +8,8 @@ use App\Http\Controllers\PurchasingController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DocumentFlowController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -75,4 +77,18 @@ Route::controller(DocFlowController::class)->group(function () {
     Route::get('/show-document/{id}', 'show');
     Route::post('/update-document', 'update');
     Route::get('/destroy-document/{id}', 'destroy');
+});
+Route::controller(UserController::class)->group(function () {
+    Route::get('/index-user', 'index');
+    Route::post('/create-user', 'create');
+    Route::get('/show-user/{id}', 'show');
+    Route::post('/update-user', 'update');
+    Route::get('/destroy-user/{id}', 'destroy');
+});
+Route::controller(CustomerController::class)->group(function () {
+    Route::get('/index-customer', 'index');
+    Route::post('/create-customer', 'create');
+    Route::get('/show-customer/{id}', 'show');
+    Route::post('/update-customer', 'update');
+    Route::get('/destroy-customer/{id}', 'destroy');
 });
