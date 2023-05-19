@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PurchasingResource;
 use App\Models\Purchasing;
 use Illuminate\Http\Request;
-
+use App\Models\DocFlowLogic;
+use DB;
 class PurchasingController extends Controller
 {
     /**
@@ -100,4 +101,5 @@ class PurchasingController extends Controller
     {
         //
     }
+
 }

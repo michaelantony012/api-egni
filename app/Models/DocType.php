@@ -14,7 +14,7 @@ class DocType extends Model
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     // protected $guarded = ['id'];
-    protected $fillable = ['id', 'doctype_no', 'doctype_desc'];
+    protected $fillable = ['id', 'doctype_no', 'doctype_desc', 'doctype_table'];
     // protected $hidden = [];
     // protected $dates = [];
 

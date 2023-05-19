@@ -11,7 +11,7 @@ class DocFlowLogic extends Model
     use HasFactory;
 
     protected $table = 'document_flow_logic';
-    // protected $primaryKey = 'id';
+    protected $primaryKey = 'id';
     // public $timestamps = false;
     // protected $guarded = ['id'];
     protected $fillable = ['doctype_id', 'flow_prev', 'flow_next', 'flow_desc'];

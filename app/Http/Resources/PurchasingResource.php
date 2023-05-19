@@ -15,6 +15,7 @@ class PurchasingResource extends JsonResource
     public function toArray($request)
     {
         // return parent::toArray($request);
+        dd($this->purchasingDetail);
         return [
             'id' => $this->id,
             'no_header' => $this->no_header,
@@ -25,7 +26,7 @@ class PurchasingResource extends JsonResource
             'location' => $this->location->loc_name,
             'supplier' => $this->supplier->nama_supplier,
             'flow_desc' => $this->flow_desc,
-            'detail' => $this->purchasingDetail,
+            'detail' => $this->purchasingDetail->merge($this->product),
         ];
     }
 }

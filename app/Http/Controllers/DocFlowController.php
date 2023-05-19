@@ -161,4 +161,118 @@ class DocFlowController extends Controller
             'message' => 'Berhasil'
         ]);
     }
+
+    public function openEditor($id,$type){
+        $trans_id = $id;
+		if($type=='qcheck'){
+			$getdatatype = "check";
+		}else if($type=='qupdate'){
+			$getdatatype = "update";
+		}
+        return view('ace')->with(compact('trans_id','getdatatype'));
+    }
+
+    public function getDataEditor(Request $request){
+        if(request()->ajax()){
+            if($request->gtype=='update'){
+                $query = DocFlowLogic::where('id',$request->transid)->select('query_update')->first();
+            }else if($request->gtype=='check'){
+                $query = "";
+            }
+            return response()->json(['msg'=>$query]);
+        }else{
+            return response()->json(['msg'=>'No Ajax Request!']); 
+        }
+    }
+
+    public function updateEditor(Request $request){
+        if(request()->ajax()){
+            if($request->gtype=='update'){
+                $query = DocFlowLogic::where('id',$request->transid)->update(['query_update'=>$request->recordText]);
+            }else if($request->gtype=='check'){
+                $query = DocFlowLogic::where('id',$request->transid)->update(['query_check'=>$request->recordText]);
+            }
+            return response()->json(['msg'=>'Success Update!']);
+        }else{
+            return response()->json(['msg'=>'No Ajax Request!']); 
+        }
+    }
+
+    public function updateFlow(Request $request,$id){
+        $logic = DocFlowLogic::where('doctype_id',$request->doctype_id)->where('flow_prev',$request->flow_prev)->where('flow_next',$request->flow_next)->select('query_check','query_update')->first();
+        $basetable = DocType::where('id',$request->doctype_id)->select('doctype_table')->first();
+        $baseheader = DB::table($basetable->doctype_table)
+                        ->where('id',$id)->first();
+
+        $fetchdoctype = $baseheader->doctype_id;
+        $fetchflowseq = $baseheader->flow_seq;
+
+        $user = 1;
+        $rs['flag'] = true;
+		$rs['update_log'] = "";
+        
+        
+        if($fetchdoctype!=$request->doctype_id || $fetchflowseq!=$request->flow_prev){
+			
+            $rs['flag'] = false;
+            $rs['update_log'] = "Status document not matched. Please reload the document";
+            
+        }else{
+            $query_dropcheck = "";
+            if(!is_null($logic->query_check) && trim($logic->query_check)!=''){
+                
+
+                $query_dropcheck = "DROP PROCEDURE IF EXISTS `z_id".$user."`;";
+                \DB::unprepared($query_dropcheck);
+
+                $query_check = "
+				CREATE PROCEDURE `z_id".$user."`(_documentid INT)
+				BEGIN
+					set @docid = _documentid;
+					".$logic->query_check."
+					SELECT @msg AS msg;
+				END;";				
+				\DB::unprepared($query_check);
+				
+				// $query_call = "CALL z_id".$user."($doc_id);";
+				$temp = DB::statement('CAAL z_id"'.$user.'(?)',array($id));
+				
+				if($temp[0]['msg']!=""){
+					$rs['flag'] = false;
+					$rs['update_log'] = $temp[0]['msg'];
+				}
+
+            }
+
+            if($rs['flag']){
+                $query_dropupdate = "DROP PROCEDURE IF EXISTS `y_id".$user."`;";
+                \DB::unprepared($query_dropupdate);
+                
+                $query_update = "
+                CREATE PROCEDURE `y_id".$user."`(xdocumentid INT, xflowprev INT, xflownext INT)
+                BEGIN
+                
+                    DECLARE `_rollback` BOOL DEFAULT 0;
+                    DECLARE EXIT HANDLER FOR SQLEXCEPTION SET `_rollback` = 1;
+                    
+                    set @docid = xdocumentid;
+                    set @flowprev = xflowprev;
+                    set @flownext = xflownext;
+                    
+                    UPDATE $basetable->doctype_table SET flow_seq = @flownext where id = @docid and flow_seq = @flowprev;	
+                    
+                    ".(is_null($logic->query_update)?"":$logic->query_update)."				
+                    
+                    IF `_rollback` THEN	ROLLBACK; CALL raise_error; ELSE COMMIT; END IF;
+                
+                    
+                END;";
+                \DB::unprepared($query_update);
+                \DB::statement('CALL y_id'.$user.'(?,?,?)',array($id,$request->flow_prev,$request->flow_next));
+                \DB::unprepared($query_dropupdate.$query_dropcheck);
+            }
+            
+        }
+        return $rs;
+    }
 }

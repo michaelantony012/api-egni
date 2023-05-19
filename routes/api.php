@@ -70,6 +70,7 @@ Route::controller(PurchasingController::class)->group(function () {
     Route::get('/show-purchasing/{id}', 'show');
     Route::post('/update-purchasing', 'update');
     Route::get('/destroy-purchasing/{id}', 'destroy');
+    
 });
 Route::controller(DocFlowController::class)->group(function () {
     Route::get('/index-document', 'index');
@@ -77,6 +78,10 @@ Route::controller(DocFlowController::class)->group(function () {
     Route::get('/show-document/{id}', 'show');
     Route::post('/update-document', 'update');
     Route::get('/destroy-document/{id}', 'destroy');
+    Route::get('/oeditor-document/{id}/{type}', 'openEditor');
+    Route::get('/geditor-document', 'getDataEditor')->name('data.editor');
+    Route::post('/ueditor-document', 'updateEditor')->name('update.editor');
+    Route::get('/update-flow/{id}', 'updateFlow');
 });
 Route::controller(UserController::class)->group(function () {
     Route::get('/index-user', 'index');
