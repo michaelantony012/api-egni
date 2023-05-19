@@ -23,10 +23,11 @@ class PurchasingResource extends JsonResource
             'flow_seq' => $this->flow_seq,
             'doctype_id' => $this->doctype_id,
             'user' => $this->user->name,
-            'location' => $this->location->loc_name,
-            'supplier' => $this->supplier->nama_supplier,
+            'location' => $this->location,
+            'supplier' => $this->supplier,
             'flow_desc' => $this->flow_desc,
-            'detail' => $this->purchasingDetail->merge($this->product),
+            'detail' => $this->purchasingDetail,
+            // 'detail' => new d_PurchasingResource($this->purchasingDetail),
         ];
     }
 }
