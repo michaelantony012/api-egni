@@ -26,7 +26,7 @@ class PurchasingResource extends JsonResource
             'location' => $this->location,
             'supplier' => $this->supplier,
             'flow_desc' => $this->flow_desc,
-            'detail' => $this->purchasingDetail->load('products:id,product_name,product_price'),
+            'detail' => $this->purchasingDetail->load('products'),
             // 'detail' => new d_PurchasingResource($this->purchasingDetail),
         ];
     }
