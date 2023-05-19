@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PurchasingResource;
 use App\Http\Resources\d_PurchasingResource;
 use App\Models\DocFlow;
+use App\Models\Product;
 
 class PurchasingController extends Controller
 {
@@ -128,10 +129,10 @@ class PurchasingController extends Controller
 
         return response()->json([
             'data' => new PurchasingResource($data),
-
             'message' => 'Data berhasil di dapat'
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.

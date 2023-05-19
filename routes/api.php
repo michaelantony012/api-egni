@@ -59,6 +59,7 @@ Route::controller(LocationController::class)->group(function () {
 Route::controller(ProductController::class)->group(function () {
     Route::get('/index-product', 'index');
     Route::get('/index-opt-product', 'optionIndex');
+    Route::post('/search-product', 'search');
     Route::post('/create-product', 'create');
     Route::get('/show-product/{id}', 'show');
     Route::post('/update-product', 'update');

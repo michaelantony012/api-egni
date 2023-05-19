@@ -34,6 +34,14 @@ class ProductController extends Controller
             'message' => 'Data berhasil di dapat'
         ]);
     }
+    public function search(Request $request)
+    {
+        $data = DB::table('products')->where('product_code', $request->words)->get();
+        return response()->json([
+            'data' => $data,
+            'message' => 'Data berhasil di dapat'
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
