@@ -70,6 +70,7 @@ Route::controller(PurchasingController::class)->group(function () {
     Route::get('/show-purchasing/{id}', 'show');
     Route::post('/update-purchasing', 'update');
     Route::get('/destroy-purchasing/{id}', 'destroy');
+    Route::post('/docflow-purchasing', 'docflow');
 });
 Route::controller(DocFlowController::class)->group(function () {
     Route::get('/index-document', 'index');
