@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Purchasing;
+use App\Http\Resources\AdjustmentResource;
+use App\Models\Adjustment;
+use App\Models\AdjustmentDetail;
 use Illuminate\Http\Request;
-use App\Models\PurchasingDetail;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\PurchasingResource;
-use App\Http\Resources\d_PurchasingResource;
-use App\Models\DocFlow;
-use App\Models\Product;
 
-class PurchasingController extends Controller
+class AdjustmentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,43 +17,12 @@ class PurchasingController extends Controller
      */
     public function index()
     {
-        $data = Purchasing::Join('document_flow as b', function ($join) {
-            $join->on('purchase_invoice_h.doctype_id', 'b.doctype_id')
-                ->on('purchase_invoice_h.flow_seq', 'b.doc_flow');
-        })->select('purchase_invoice_h.*', 'b.flow_desc')
-            ->get();
+        $data = Adjustment::all();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
-            'data' => PurchasingResource::collection($data),
+            'data' => AdjustmentResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);
-    }
-    public function detailIndex($id)
-    {
-        # code...
-    }
-
-    public function docflow(Request $request)
-    {
-        $docflow = DocFlow::where('doctype_id', '=', $request->doctype_id)
-            ->where('flow_prev', '=', $request->flow_seq)
-            ->where('flow_next', '=', $request->flow_next)
-            ->get();
-
-        if ($docflow) {
-            DB::select($docflow->query_check);
-            DB::select($docflow->query_update);
-
-            return response()->json([
-                'status' => true,
-                'message' => $docflow->flow_desc . ' Success'
-            ]);
-        } else {
-            return response()->json([
-                'status' => false,
-                'message' => 'Doc Flow not found'
-            ]);
-        }
     }
 
     /**
@@ -67,27 +33,25 @@ class PurchasingController extends Controller
     public function create(Request $request)
     {
         DB::beginTransaction();
-        $add_purchase_header = Purchasing::create([
+        $add_purchase_header = Adjustment::create([
             'date_header' => $request->date_header,
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id,
+            'type' => $request->type,
             'location_id' => $request->location_id,
-            'supplier_id' => $request->supplier_id
+
         ]);
-        $detail = $request->detail;// decode ke array dulu
         // $detail = json_decode($request->detail, true); // decode ke array dulu
+        $detail = $request->detail; // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
-            $add_purchase_detail = PurchasingDetail::create([
+            $add_purchase_detail = AdjustmentDetail::create([
                 'id_header' => $add_purchase_header->id,
                 'id_product' => $detail[$i]['id_product'],
                 'qty' => $detail[$i]['qty'],
                 'keterangan' => $detail[$i]['keterangan'],
                 'price' => $detail[$i]['price'],
-                'disc_value' => $detail[$i]['disc_value'],
                 'total_price' => $detail[$i]['total_price'],
-                'vat_value' => $detail[$i]['vat_value'],
-                'disc_percent' => $detail[$i]['disc_percent'],
-                'vat_percent' => $detail[$i]['vat_percent'],
+
             ]);
 
             if (!$add_purchase_detail || !$add_purchase_header) {
@@ -121,27 +85,26 @@ class PurchasingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Purchasing  $purchasing
+     * @param  \App\Models\Adjustment  $adjustment
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $data = Purchasing::findOrFail($id);
+        $data = Adjustment::findOrFail($id);
 
         return response()->json([
-            'data' => new PurchasingResource($data),
+            'data' => new AdjustmentResource($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }
 
-
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Purchasing  $purchasing
+     * @param  \App\Models\Adjustment  $adjustment
      * @return \Illuminate\Http\Response
      */
-    public function edit(Purchasing $purchasing)
+    public function edit(Adjustment $adjustment)
     {
         //
     }
@@ -150,24 +113,26 @@ class PurchasingController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Purchasing  $purchasing
+     * @param  \App\Models\Adjustment  $adjustment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Purchasing $purchasing)
+    public function update(Request $request, Adjustment $adjustment)
     {
         DB::beginTransaction();
 
         // update header
-        $update_header1 = Purchasing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->first(); // chek flow sequent, status harus new entry bukan posted
+        $update_header1 = Adjustment::where('id', '=', $request->id)->where('flow_seq', '=', 1)->first(); // chek flow sequent, status harus new entry bukan posted
         if ($update_header1) {
             // $update_header->date_header = $request['date_header'];
             // $update_header->id_lokasi = $request['id_lokasi']; // lokasi ikut terupdate
             // $update_header->id_user = $request['id_user']; // user ikut terupdate
             // $update_header->save();
-            $update_header = Purchasing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
+            $update_header = Adjustment::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
+                // 'no_header' => $request['no_header'],
+                // 'type' => $request['type'],
                 'date_header' => $request['date_header'],
                 'location_id' => $request['location_id'],
-                'supplier_id' => $request['supplier_id']
+                'keterangan' => $request['keterangan'],
             ]);
             if (!$update_header) {
                 return response()->json([
@@ -183,18 +148,13 @@ class PurchasingController extends Controller
             if ($update_details) {
                 for ($i = 0; $i < count($update_details); $i++) {
 
-                    $update_detail = PurchasingDetail::where('id', $update_details[$i]['id'])->first();
+                    $update_detail = AdjustmentDetail::where('id', $update_details[$i]['id'])->first();
                     if ($update_detail) {
                         $update_detail->id_product = $update_details[$i]['id_product'];
                         $update_detail->qty = $update_details[$i]['qty'];
                         $update_detail->keterangan = $update_details[$i]['keterangan'];
                         $update_detail->price = $update_details[$i]['price'];
-                        $update_detail->margin = $update_details[$i]['margin'];
-                        $update_detail->disc_value = $update_details[$i]['disc_value'];
                         $update_detail->total_price = $update_details[$i]['total_price'];
-                        $update_detail->vat_value = $update_details[$i]['vat_value'];
-                        $update_detail->disc_percent = $update_details[$i]['disc_percent'];
-                        $update_detail->vat_percent = $update_details[$i]['vat_percent'];
 
                         $update_detail->save();
                     }
@@ -215,7 +175,7 @@ class PurchasingController extends Controller
             $delete_details = $request->delete_detail;
             if ($delete_details) {
                 for ($i = 0; $i < count($delete_details); $i++) {
-                    $delete_detail = PurchasingDetail::where('id', $delete_details[$i]['id'])->delete();
+                    $delete_detail = AdjustmentDetail::where('id', $delete_details[$i]['id'])->delete();
 
                     if (!$delete_detail) {
                         DB::rollBack();
@@ -233,17 +193,14 @@ class PurchasingController extends Controller
             $create_details = $request->create_detail;
             if ($create_details) {
                 for ($i = 0; $i < count($create_details); $i++) {
-                    $create_detail = PurchasingDetail::create([
+                    $create_detail = AdjustmentDetail::create([
                         'id_header' => $request->id,
                         'id_product' => $create_details[$i]['id_product'],
                         'qty' => $create_details[$i]['qty'],
                         'keterangan' => $create_details[$i]['keterangan'],
                         'price' => $create_details[$i]['price'],
-                        'disc_value' => $create_details[$i]['disc_value'],
                         'total_price' => $create_details[$i]['total_price'],
-                        'vat_value' => $create_details[$i]['vat_value'],
-                        'disc_percent' => $create_details[$i]['disc_percent'],
-                        'vat_percent' => $create_details[$i]['vat_percent'],
+
                     ]);
 
                     if (!$create_detail) {
@@ -270,23 +227,23 @@ class PurchasingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Purchasing  $purchasing
+     * @param  \App\Models\Adjustment  $adjustment
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request)
     {
-        // Delete hanya diperuntukkan header dgn status New Entry (1), jika 10 maka akan ditolak
-        DB::beginTransaction();
-        $deleted = Purchasing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->delete(); // chek flow sequent,  status harus new entry bukan posted
-        if (!$deleted) {
-            // DB::table('faktur_masuk_d')->where('id_header', $id)->delete(); // tidak perlu Delete detail, sdh otomatis ada cascade
-            DB::rollBack();
-        }
-        DB::commit();
-        return response()->json([
-            'status' => $deleted ? true : false,
-            'message' => $deleted ? 'Berhasil di hapus' : 'Gagal dihapus'
+         // Delete hanya diperuntukkan header dgn status New Entry (1), jika 10 maka akan ditolak
+         DB::beginTransaction();
+         $deleted = Adjustment::where('id', '=', $request->id)->where('flow_seq', '=', 1)->delete(); // chek flow sequent,  status harus new entry bukan posted
+         if (!$deleted) {
+             // DB::table('faktur_masuk_d')->where('id_header', $id)->delete(); // tidak perlu Delete detail, sdh otomatis ada cascade
+             DB::rollBack();
+         }
+         DB::commit();
+         return response()->json([
+             'status' => $deleted ? true : false,
+             'message' => $deleted ? 'Berhasil di hapus' : 'Gagal dihapus'
 
-        ]);
+         ]);
     }
 }

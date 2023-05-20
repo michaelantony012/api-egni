@@ -35,9 +35,41 @@ class OutgoingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        DB::beginTransaction();
+        $add_purchase_header = Outgoing::create([
+            'date_header' => $request->date_header,
+            'no_header' => "", //dibuat otomatis pada saat posting
+            'user_id' => $request->user_id,
+            'location_id' => $request->location_id,
+
+        ]);
+        $detail = json_decode($request->detail, true); // decode ke array dulu
+        for ($i = 0; $i < count($detail); $i++) {
+            $add_purchase_detail = OutgoingDetail::create([
+                'id_header' => $add_purchase_header->id,
+                'id_product' => $detail[$i]['id_product'],
+                'qty' => $detail[$i]['qty'],
+                'remark' => $detail[$i]['remark'],
+
+            ]);
+
+            if (!$add_purchase_detail || !$add_purchase_header) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal menambahkan data'
+                ], 422);
+            }
+        }
+        // DB::rollBack(); // testing
+        DB::commit();
+        return response()->json([
+            'status' => true,
+            'message' => 'Data berhasil ditambahkan',
+            'id_header' => $add_purchase_header->id // id header document
+        ]);
     }
 
     /**
@@ -192,8 +224,20 @@ class OutgoingController extends Controller
      * @param  \App\Models\Outgoing  $outgoing
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Outgoing $outgoing)
+    public function destroy(Request $request)
     {
-        //
+        // Delete hanya diperuntukkan header dgn status New Entry (1), jika 10 maka akan ditolak
+        DB::beginTransaction();
+        $deleted = Outgoing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->delete(); // chek flow sequent,  status harus new entry bukan posted
+        if (!$deleted) {
+            // DB::table('faktur_masuk_d')->where('id_header', $id)->delete(); // tidak perlu Delete detail, sdh otomatis ada cascade
+            DB::rollBack();
+        }
+        DB::commit();
+        return response()->json([
+            'status' => $deleted ? true : false,
+            'message' => $deleted ? 'Berhasil di hapus' : 'Gagal dihapus'
+
+        ]);
     }
 }

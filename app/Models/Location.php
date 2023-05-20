@@ -27,5 +27,9 @@ class Location extends Model
     {
         return $this->hasOne(Outgoing::class, 'location_id', 'id');
     }
+    public function adjustment(): HasOne
+    {
+        return $this->hasOne(Adjustment::class, 'location_id', 'id');
+    }
 
 }

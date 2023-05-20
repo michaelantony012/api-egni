@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DocFlowController;
 use App\Http\Controllers\LocationController;
@@ -73,6 +74,14 @@ Route::controller(OutgoingController::class)->group(function () {
     Route::post('/update-outgoing', 'update');
     Route::get('/destroy-outgoing/{id}', 'destroy');
     Route::post('/docflow-outgoing', 'docflow');
+});
+Route::controller(AdjustmentController::class)->group(function () {
+    Route::get('/index-adjustment', 'index');
+    Route::post('/create-adjustment', 'create');
+    Route::get('/show-adjustment/{id}', 'show');
+    Route::post('/update-adjustment', 'update');
+    Route::get('/destroy-adjustment/{id}', 'destroy');
+    Route::post('/docflow-adjustment', 'docflow');
 });
 Route::controller(PurchasingController::class)->group(function () {
     Route::get('/index-purchasing', 'index');

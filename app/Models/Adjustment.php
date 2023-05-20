@@ -4,23 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Product extends Model
+class Adjustment extends Model
 {
     use HasFactory;
 
-    protected $table = 'products';
+    /*
+    |--------------------------------------------------------------------------
+    | GLOBAL VARIABLES
+    |--------------------------------------------------------------------------
+    */
+
+    protected $table = 'stock_adjustment_h';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
     // protected $fillable = [];
     // protected $hidden = [];
     // protected $dates = [];
-    protected $casts = [
-        'primary_stock' => 'boolean',
-    ];
 
-     /*
+    /*
     |--------------------------------------------------------------------------
     | FUNCTIONS
     |--------------------------------------------------------------------------
@@ -31,27 +35,18 @@ class Product extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function category()
+    public function location(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Location::class, 'location_id', 'id');
     }
-    public function subCategory()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(subCategory::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
-    public function purchasing_detail()
+    public function adjustmentDetail()
     {
-        return $this->hasMany(PurchasingDetail::class);
+        return $this->hasMany(AdjustmentDetail::class, 'id_header');
     }
-    public function outgoing_detail()
-    {
-        return $this->hasMany(OutgoingDetail::class);
-    }
-    public function adjustment_detail()
-    {
-        return $this->hasMany(AdjustmentDetail::class);
-    }
-
 
     /*
     |--------------------------------------------------------------------------

@@ -67,4 +67,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Outgoing::class, 'user_id', 'id');
     }
+    public function adjustment(): HasOne
+    {
+        return $this->hasOne(Adjustment::class, 'user_id', 'id');
+    }
 }
