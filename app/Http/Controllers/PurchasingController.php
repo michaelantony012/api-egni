@@ -188,6 +188,7 @@ class PurchasingController extends Controller
                         $update_detail->qty = $update_details[$i]['qty'];
                         $update_detail->keterangan = $update_details[$i]['keterangan'];
                         $update_detail->price = $update_details[$i]['price'];
+                        $update_detail->margin = $update_details[$i]['margin'];
                         $update_detail->disc_value = $update_details[$i]['disc_value'];
                         $update_detail->total_price = $update_details[$i]['total_price'];
                         $update_detail->vat_value = $update_details[$i]['vat_value'];
