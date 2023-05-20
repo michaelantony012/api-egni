@@ -40,12 +40,15 @@ class OutgoingController extends Controller
         DB::beginTransaction();
         $add_purchase_header = Outgoing::create([
             'date_header' => $request->date_header,
+            'flow_seq' => $request->flow_seq,
+            'doctype_id' => $request->doctype_id,
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id,
             'location_id' => $request->location_id,
 
         ]);
-        $detail = json_decode($request->detail, true); // decode ke array dulu
+        // $detail = json_decode($request->detail, true); // decode ke array dulu
+        $detail = $request->detail; // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_purchase_detail = OutgoingDetail::create([
                 'id_header' => $add_purchase_header->id,
@@ -129,7 +132,7 @@ class OutgoingController extends Controller
             // $update_header->id_user = $request['id_user']; // user ikut terupdate
             // $update_header->save();
             $update_header = Outgoing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
-                'no_header' => $request['no_header'],
+                // 'no_header' => $request['no_header'],
                 'location_id' => $request['location_id'],
             ]);
             if (!$update_header) {
