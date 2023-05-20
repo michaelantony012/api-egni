@@ -43,6 +43,10 @@ class Product extends Model
     {
         return $this->hasMany(PurchasingDetail::class);
     }
+    public function outgoing_detail()
+    {
+        return $this->hasMany(OutgoingDetail::class);
+    }
 
 
     /*

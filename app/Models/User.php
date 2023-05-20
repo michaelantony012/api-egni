@@ -63,4 +63,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Purchasing::class, 'user_id', 'id');
     }
+    public function outgoing(): HasOne
+    {
+        return $this->hasOne(Outgoing::class, 'user_id', 'id');
+    }
 }

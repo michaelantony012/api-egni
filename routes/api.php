@@ -10,6 +10,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DocumentFlowController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OutgoingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -64,6 +65,14 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/show-product/{id}', 'show');
     Route::post('/update-product', 'update');
     Route::get('/destroy-product/{id}', 'destroy');
+});
+Route::controller(OutgoingController::class)->group(function () {
+    Route::get('/index-outgoing', 'index');
+    Route::post('/create-outgoing', 'create');
+    Route::get('/show-outgoing/{id}', 'show');
+    Route::post('/update-outgoing', 'update');
+    Route::get('/destroy-outgoing/{id}', 'destroy');
+    Route::post('/docflow-outgoing', 'docflow');
 });
 Route::controller(PurchasingController::class)->group(function () {
     Route::get('/index-purchasing', 'index');

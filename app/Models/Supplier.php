@@ -15,4 +15,8 @@ class Supplier extends Model
     {
         return $this->hasOne(Purchasing::class, 'supplier_id', 'id');
     }
+    public function outgoing(): HasOne
+    {
+        return $this->hasOne(Outgoing::class, 'supplier_id', 'id');
+    }
 }

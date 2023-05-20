@@ -23,5 +23,9 @@ class Location extends Model
     {
         return $this->hasOne(Purchasing::class, 'location_id', 'id');
     }
+    public function outgoing(): HasOne
+    {
+        return $this->hasOne(Outgoing::class, 'location_id', 'id');
+    }
 
 }
