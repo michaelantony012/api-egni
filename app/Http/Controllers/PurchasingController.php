@@ -177,7 +177,8 @@ class PurchasingController extends Controller
 
             // data detail diupdate // tested
             // $update_details = json_decode($request->update_barang, true); // decode dulu
-            $update_details = json_decode($request->update_detail, true);
+            // $update_details = json_decode($request->update_detail, true);
+            $update_details = $request->update_detail;
             if ($update_details) {
                 for ($i = 0; $i < count($update_details); $i++) {
 
@@ -208,7 +209,8 @@ class PurchasingController extends Controller
 
             // data detail didelete
             // $delete_barangs = json_decode($request->delete_barang, true);
-            $delete_details = json_decode($request->delete_detail, true);
+            // $delete_details = json_decode($request->delete_detail, true);
+            $delete_details = $request->delete_detail;
             if ($delete_details) {
                 for ($i = 0; $i < count($delete_details); $i++) {
                     $delete_detail = PurchasingDetail::where('id', $delete_details[$i]['id'])->delete();
@@ -225,7 +227,8 @@ class PurchasingController extends Controller
 
             // data detail dicreate
             // $create_barangs = json_decode($request->create_barang, true);
-            $create_details = json_decode($request->create_detail, true);
+            // $create_details = json_decode($request->create_detail, true);
+            $create_details = $request->create_detail;
             if ($create_details) {
                 for ($i = 0; $i < count($create_details); $i++) {
                     $create_detail = PurchasingDetail::create([
