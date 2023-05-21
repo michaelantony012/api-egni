@@ -100,6 +100,7 @@ Route::controller(DocFlowController::class)->group(function () {
     Route::get('/oeditor-document/{id}/{type}', 'openEditor');
     Route::get('/geditor-document', 'getDataEditor')->name('data.editor');
     Route::post('/ueditor-document', 'updateEditor')->name('update.editor');
+    Route::get('/logic-document', 'getFlowLogic');
     Route::get('/update-flow/{id}', 'updateFlow');
 });
 Route::controller(UserController::class)->group(function () {
