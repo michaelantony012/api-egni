@@ -17,7 +17,13 @@ class opt_ProductResource extends JsonResource
         // return parent::toArray($request);
         return [
             'id' => $this->id,
-            'product_name' => $this->barcode . '-' . $this->product_code . '::' . $this->product_name,
+            'barcode' => $this->barcode,
+            'product_code' => $this->product_code,
+            'product_name' => $this->product_name,
+            'category' => $this->category,
+            'sub_category' => $this->subCategory,
+            'product_price' => $this->product_price,
+
         ];
     }
 }

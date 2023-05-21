@@ -36,9 +36,13 @@ class ProductController extends Controller
     }
     public function search(Request $request)
     {
-        $data = DB::table('products')->where('product_code', $request->words)->get();
+        // $data = DB::table('products')->where('product_code', "LIKE", '%' . $request->words . '%')->get();
+        $data = Product::where('product_code', "LIKE", '%' . $request->words . '%')
+        ->where('primary_stock', true)
+        ->get();
         return response()->json([
-            'data' => $data,
+            'status' => collect($data)->isNotEmpty() ? true : false,
+            'data' => opt_ProductResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }
