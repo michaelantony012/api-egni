@@ -275,4 +275,14 @@ class DocFlowController extends Controller
         }
         return $rs;
     }
+
+    public function getFlowLogic(Request $request){
+        $logic = DocFlowLogic::where('doctype_id', $request->doctype_id)->where('flow_prev', $request->flow_prev)
+                    ->select('id','doctype_id','flow_prev','flow_next','flow_desc')->get(); 
+        return response()->json([
+            'status' => $logic->isNotEmpty() ? true : false,
+            'data' => $logic,
+            'message' => 'Data berhasil di dapat'
+        ]);
+    }
 }
