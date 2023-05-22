@@ -12,6 +12,7 @@ use App\Http\Controllers\DocumentFlowController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OutgoingController;
+use App\Http\Controllers\BeginningStockController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -116,4 +117,12 @@ Route::controller(CustomerController::class)->group(function () {
     Route::get('/show-customer/{id}', 'show');
     Route::post('/update-customer', 'update');
     Route::get('/destroy-customer/{id}', 'destroy');
+});
+Route::controller(BeginningStockController::class)->group(function () {
+    Route::get('/index-beginningstock', 'index');
+    Route::post('/create-beginningstock', 'create');
+    Route::get('/show-beginningstock/{id}', 'show');
+    Route::post('/update-beginningstock', 'update');
+    Route::get('/destroy-beginningstock/{id}', 'destroy');
+    Route::post('/docflow-beginningstock', 'docflow');
 });
