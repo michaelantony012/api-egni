@@ -198,11 +198,11 @@ class DocFlowController extends Controller
         }
     }
 
-    public function updateFlow(Request $request,$id){
+    public function updateFlow(Request $request){
         $logic = DocFlowLogic::where('doctype_id',$request->doctype_id)->where('flow_prev',$request->flow_prev)->where('flow_next',$request->flow_next)->select('query_check','query_update')->first();
         $basetable = DocType::where('id',$request->doctype_id)->select('doctype_table')->first();
         $baseheader = DB::table($basetable->doctype_table)
-                        ->where('id',$id)->first();
+                        ->where('id',$request->doc_id)->first();
 
         $fetchdoctype = $baseheader->doctype_id;
         $fetchflowseq = $baseheader->flow_seq;
@@ -235,7 +235,7 @@ class DocFlowController extends Controller
 				\DB::unprepared($query_check);
 				
 				// $query_call = "CALL z_id".$user."($doc_id);";
-				$temp = DB::statement('CAAL z_id"'.$user.'(?)',array($id));
+				$temp = DB::statement('CALL z_id"'.$user.'(?)',array($request->doc_id));
 				
 				if($temp[0]['msg']!=""){
 					$rs['flag'] = false;
@@ -268,7 +268,7 @@ class DocFlowController extends Controller
                     
                 END;";
                 \DB::unprepared($query_update);
-                \DB::statement('CALL y_id'.$user.'(?,?,?)',array($id,$request->flow_prev,$request->flow_next));
+                \DB::statement('CALL y_id'.$user.'(?,?,?)',array($request->doc_id,$request->flow_prev,$request->flow_next));
                 \DB::unprepared($query_dropupdate.$query_dropcheck);
             }
             
