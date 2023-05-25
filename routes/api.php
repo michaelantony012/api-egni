@@ -67,6 +67,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/show-product/{id}', 'show');
     Route::post('/update-product', 'update');
     Route::get('/destroy-product/{id}', 'destroy');
+    Route::post('/masscreate-product', 'massCreate');
 });
 Route::controller(OutgoingController::class)->group(function () {
     Route::get('/index-outgoing', 'index');
