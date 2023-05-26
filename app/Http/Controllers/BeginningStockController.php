@@ -42,8 +42,8 @@ class BeginningStockController extends Controller
             'location_id' => $request->location_id,
 
         ]);
-        $detail = json_decode($request->detail, true); // decode ke array dulu
-        // $detail = $request->detail; // decode ke array dulu
+        // $detail = json_decode($request->detail, true); // decode ke array dulu
+        $detail = $request->detail; // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_purchase_detail = BeginningStockDetail::create([
                 'id_header' => $add_purchase_header->id,

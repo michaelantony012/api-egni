@@ -91,8 +91,8 @@ class ProductController extends Controller
 
         ]);
 
-        // $items = $request->items;
-        $items = json_decode($request->items, true);
+        $items = $request->items;
+        // $items = json_decode($request->items, true);
         for ($i = 0; $i < count($items); $i++) {
             $create_item = Product::create([
                 'barcode' => $items[$i]['barcode'],
