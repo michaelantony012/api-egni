@@ -106,14 +106,16 @@ class ProductController extends Controller
                 // 'join_id' => $request->join_id // tidak perlu krn ini utk item non primary saja
             ]);
 
-            $add_beg_detail = BeginningStockDetail::create([
-                'id_header' => $add_beg_header->id,
-                'id_product' => $create_item->id,
-                'qty' => $items[$i]['qty'],
-                // 'keterangan' => $items[$i]['keterangan'],
-                // 'price' => $items[$i]['price'], // beg stock yg tanpa harga
-                // 'total_price' => $items[$i]['total_price'],
-            ]);
+            if($items[$i]['qty']>0){
+                $add_beg_detail = BeginningStockDetail::create([
+                    'id_header' => $add_beg_header->id,
+                    'id_product' => $create_item->id,
+                    'qty' => $items[$i]['qty'],
+                    // 'keterangan' => $items[$i]['keterangan'],
+                    // 'price' => $items[$i]['price'], // beg stock yg tanpa harga
+                    // 'total_price' => $items[$i]['total_price'],
+                ]);
+            }
 
             if (!$add_beg_detail || !$add_beg_header || !$create_item) {
                 DB::rollBack();
@@ -127,16 +129,23 @@ class ProductController extends Controller
         DB::commit();
 
         // posting beginning stock
-        $updbegflow = new DocFlowController();
-        $content = new Request([
+        $updbegflow1 = new DocFlowController();
+        $content1 = new Request([
             'doctype_id' => 3,
             'doc_id' => $add_beg_header->id,
             'flow_prev' => 1,
             'flow_next' => 10
         ]);
-        $updbegflow->updateFlow($content);
-        // $updbegflow = new ProductController();
-        // $updbegflow->updateFlow(3,$add_beg_header->id,1,10);
+        $updbegflow1->updateFlow($content1);
+
+        $updbegflow2 = new DocFlowController();
+        $content2 = new Request([
+            'doctype_id' => 3,
+            'doc_id' => $add_beg_header->id,
+            'flow_prev' => 10,
+            'flow_next' => 100
+        ]);
+        $updbegflow2->updateFlow($content2);
 
         return response()->json([
             'status' => true,
@@ -224,5 +233,5 @@ class ProductController extends Controller
             'message' => 'Berhasil'
         ]);
     }
-    
+
 }
