@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\BeginningStockResource;
 use App\Models\BeginningStock;
 use App\Models\BeginningStockDetail;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
@@ -36,7 +37,7 @@ class BeginningStockController extends Controller
     {
         DB::beginTransaction();
         $add_purchase_header = BeginningStock::create([
-            'date_header' => $request->date_header,
+            'date_header' => Carbon::now()->format('Y-m-d'),
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id,
             'location_id' => $request->location_id,
@@ -131,9 +132,9 @@ class BeginningStockController extends Controller
             $update_header = BeginningStock::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
                 // 'no_header' => $request['no_header'],
                 // 'type' => $request['type'],
-                'date_header' => $request['date_header'],
+                // 'date_header' => $request['date_header'],
                 'location_id' => $request['location_id'],
-                'keterangan' => $request['keterangan'],
+                'keterangan' => 'Stock Awal',
             ]);
             if (!$update_header) {
                 return response()->json([
@@ -153,7 +154,7 @@ class BeginningStockController extends Controller
                     if ($update_detail) {
                         $update_detail->id_product = $update_details[$i]['id_product'];
                         $update_detail->qty = $update_details[$i]['qty'];
-                        $update_detail->keterangan = $update_details[$i]['keterangan'];
+                        $update_detail->keterangan = 'Stock Awal';
                         $update_detail->price = $update_details[$i]['price'];
                         $update_detail->total_price = $update_details[$i]['total_price'];
 
@@ -198,7 +199,7 @@ class BeginningStockController extends Controller
                         'id_header' => $request->id,
                         'id_product' => $create_details[$i]['id_product'],
                         'qty' => $create_details[$i]['qty'],
-                        'keterangan' => $create_details[$i]['keterangan'],
+                        'keterangan' => 'Stock Awal',
                         'price' => $create_details[$i]['price'],
                         'total_price' => $create_details[$i]['total_price'],
 
