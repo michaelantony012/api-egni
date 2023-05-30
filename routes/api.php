@@ -68,6 +68,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::post('/update-product', 'update');
     Route::get('/destroy-product/{id}', 'destroy');
     Route::post('/masscreate-product', 'massCreate');
+    Route::post('/get-stockcard', 'stockCard');
 });
 Route::controller(OutgoingController::class)->group(function () {
     Route::get('/index-outgoing', 'index');
@@ -103,7 +104,7 @@ Route::controller(DocFlowController::class)->group(function () {
     Route::get('/geditor-document', 'getDataEditor')->name('data.editor');
     Route::post('/ueditor-document', 'updateEditor')->name('update.editor');
     Route::post('/logic-document', 'getFlowLogic');
-    Route::get('/update-flow', 'updateFlow');
+    Route::post('/update-flow', 'updateFlow');
 });
 Route::controller(UserController::class)->group(function () {
     Route::get('/index-user', 'index');

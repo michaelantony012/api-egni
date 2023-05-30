@@ -234,4 +234,40 @@ class ProductController extends Controller
         ]);
     }
 
+    public function stockCard(Request $request){
+        // if($this->__validate_token($request->header('token')) !== true) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'You are not authorized to send this request!'
+        //     ]);
+        // }
+
+        $sql = "select
+                    ax.*,
+                    @Balance := @Balance + trans_in + trans_out + trans_beg AS balance
+                from(
+                    SELECT NULL AS id_product, NULL as doctype_id, NULL as doc_id, NULL AS trans_date,'Beginning Balance' AS trans_remark,'Beginning Balance' AS product_name, 0 AS trans_in, 0 AS trans_out, IFNULL(SUM(trans_qty),0) AS trans_beg
+                    FROM inventory_journal
+                    WHERE id_product=? AND trans_loc=? AND trans_date<? 
+                    UNION ALL
+                    SELECT id_product, doctype_id, doc_id, trans_date, a.trans_remark, product_name, trans_in, trans_out, 0 as trans_beg
+                    FROM inventory_journal AS a
+                    INNER JOIN products AS b ON a.id_product=b.id
+                    WHERE id_product=? AND trans_loc=? AND trans_date BETWEEN ? AND ? 
+                )ax ,  (SELECT @Balance := 0) AS variableInit";
+        
+        $results = DB::select($sql,[$request->id_product,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date]);
+
+        // if (collect($stock_beg)->isEmpty()) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => "Data tidak ditemukan"
+        //     ], 404);
+        // }
+        return response()->json([
+            'status' => true,
+            'data' => $results,
+        ]);
+    }
+
 }
