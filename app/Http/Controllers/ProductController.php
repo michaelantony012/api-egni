@@ -244,7 +244,7 @@ class ProductController extends Controller
         id_product, product_code, product_name, trans_loc, loc_name
         FROM (
             SELECT 1 as num, ? AS trans_date, IFNULL(trans_qty,0) AS trans_qty, IFNULL(trans_in,0) AS trans_in, IFNULL(trans_out,0) AS trans_out,
-            a.id AS id_product, '---' AS product_code, 'Beginning Balance' AS product_name, trans_loc, loc_name
+            a.id AS id_product, '---' AS product_code, 'Beginning Balance' AS product_name, ?  as trans_loc, loc_name
             FROM products a
             LEFT JOIN (
                 SELECT id_product, SUM(trans_qty) AS trans_qty, SUM(trans_in) AS trans_in, SUM(trans_out) AS trans_out, trans_loc
@@ -269,7 +269,7 @@ class ProductController extends Controller
         ORDER BY X.num, X.trans_date
         ";
         
-        $results = DB::select($sql,[$request->start_date,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date,$request->id_product]);
+        $results = DB::select($sql,[$request->start_date,$request->id_lokasi,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date,$request->id_product]);
 
         return response()->json([
             'status' => true,
@@ -281,21 +281,25 @@ class ProductController extends Controller
 
         $sql = "
 
-        select sum(beg_qty) as beg_qty, sum(in_qty) as in_qty, sum(out_qty) as out_qty, id_product
+        select sum(beg_qty) as beg_qty, sum(in_qty) as in_qty, sum(out_qty) as out_qty, id_product,
+        product_code, product_name, trans_loc, loc_name
         from (
-            select sum(trans_qty) as beg_qty, 0 as in_qty, 0 as out_qty, id_product
+            select sum(trans_qty) as beg_qty, 0 as in_qty, 0 as out_qty, id_product, trans_loc
             from inventory_journal
             where trans_loc = ?
             and trans_date<?
-            group by id_product
+            group by id_product, trans_loc
             union all
-            SELECT 0 as beg_qty, sum(trans_in) as in_qty, SUM(trans_out) AS out_qty, id_product
+            SELECT 0 as beg_qty, sum(trans_in) as in_qty, SUM(trans_out) AS out_qty, id_product, trans_loc
             FROM inventory_journal
             WHERE trans_loc = ?
             AND trans_date between ? and ?
-            GROUP BY id_product
-        )x
-        group by id_product";
+            GROUP BY id_product, trans_loc
+        )X
+        INNER JOIN products Y ON X.id_product = Y.id
+        INNER JOIN locations L ON X.trans_loc = L.id
+        GROUP BY id_product, product_code, product_name, trans_loc, loc_name
+        ORDER BY product_name";
         
         $results = DB::select($sql,[$request->id_lokasi,$request->start_date,$request->id_lokasi,$request->start_date,$request->end_date]);
 
