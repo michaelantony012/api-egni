@@ -69,6 +69,8 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/destroy-product/{id}', 'destroy');
     Route::post('/masscreate-product', 'massCreate');
     Route::post('/get-stockcard', 'stockCard');
+    Route::post('/get-stockcardall', 'stockCardAll');
+    Route::post('/get-stockmutationdetail', 'stockMutationDetail');
 });
 Route::controller(OutgoingController::class)->group(function () {
     Route::get('/index-outgoing', 'index');

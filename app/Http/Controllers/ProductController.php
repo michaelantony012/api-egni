@@ -234,6 +234,78 @@ class ProductController extends Controller
         ]);
     }
 
+    
+    public function stockMutationDetail(Request $request){
+
+        $sql = "
+
+
+        SELECT trans_date, trans_qty, trans_in, trans_out, @Balance := @Balance + X.trans_qty AS Balance,
+        id_product, product_code, product_name, trans_loc, loc_name
+        FROM (
+            SELECT 1 as num, ? AS trans_date, IFNULL(trans_qty,0) AS trans_qty, IFNULL(trans_in,0) AS trans_in, IFNULL(trans_out,0) AS trans_out,
+            a.id AS id_product, '---' AS product_code, 'Beginning Balance' AS product_name, trans_loc, loc_name
+            FROM products a
+            LEFT JOIN (
+                SELECT id_product, SUM(trans_qty) AS trans_qty, SUM(trans_in) AS trans_in, SUM(trans_out) AS trans_out, trans_loc
+                FROM inventory_journal
+                WHERE trans_loc = ?
+                AND trans_date<?
+                AND id_product=?
+                GROUP BY id_product, trans_loc
+            ) b ON a.id = b.id_product
+            LEFT JOIN locations c ON 3 = c.id
+            WHERE a.id=?
+            UNION ALL
+            SELECT 2 as num, a.trans_date, a.trans_qty, a.trans_in, a.trans_out, a.id_product, b.product_code, b.product_name, a.trans_loc, c.loc_name
+            FROM inventory_journal a
+            INNER JOIN products b ON a.id_product=b.id
+            INNER JOIN locations c ON a.trans_loc=c.id
+            WHERE trans_loc = ?
+            AND trans_date BETWEEN ? AND ?
+            AND id_product=?
+        )X,
+        (SELECT @Balance := 0) AS variableInit
+        ORDER BY X.num, X.trans_date
+        ";
+        
+        $results = DB::select($sql,[$request->start_date,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date,$request->id_product]);
+
+        return response()->json([
+            'status' => true,
+            'data' => $results,
+        ]);
+    }
+    
+    public function stockCardAll(Request $request){
+
+        $sql = "
+
+        select sum(beg_qty) as beg_qty, sum(in_qty) as in_qty, sum(out_qty) as out_qty, id_product
+        from (
+            select sum(trans_qty) as beg_qty, 0 as in_qty, 0 as out_qty, id_product
+            from inventory_journal
+            where trans_loc = ?
+            and trans_date<?
+            group by id_product
+            union all
+            SELECT 0 as beg_qty, sum(trans_in) as in_qty, SUM(trans_out) AS out_qty, id_product
+            FROM inventory_journal
+            WHERE trans_loc = ?
+            AND trans_date between ? and ?
+            GROUP BY id_product
+        )x
+        group by id_product";
+        
+        $results = DB::select($sql,[$request->id_lokasi,$request->start_date,$request->id_lokasi,$request->start_date,$request->end_date]);
+
+        return response()->json([
+            'status' => true,
+            'data' => $results,
+        ]);
+    }
+
+
     public function stockCard(Request $request){
         // if($this->__validate_token($request->header('token')) !== true) {
         //     return response()->json([
