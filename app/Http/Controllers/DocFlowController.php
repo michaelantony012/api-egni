@@ -252,8 +252,12 @@ class DocFlowController extends Controller
                 CREATE PROCEDURE `y_id".$user."`(xdocumentid INT, xflowprev INT, xflownext INT)
                 BEGIN
                 
-                    DECLARE `_rollback` BOOL DEFAULT 0;
-                    DECLARE EXIT HANDLER FOR SQLEXCEPTION SET `_rollback` = 1;
+                    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+                    BEGIN
+                        ROLLBACK;
+                        SHOW ERRORS;
+                    END;
+                    START TRANSACTION;
                     
                     set @docid = xdocumentid;
                     set @flowprev = xflowprev;
@@ -263,7 +267,7 @@ class DocFlowController extends Controller
                     
                     ".(is_null($logic->query_update)?"":$logic->query_update)."				
                     
-                    IF `_rollback` THEN	ROLLBACK; CALL raise_error; ELSE COMMIT; END IF;
+                    COMMIT;
                 
                     
                 END;";
