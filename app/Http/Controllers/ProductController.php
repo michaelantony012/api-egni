@@ -87,6 +87,7 @@ class ProductController extends Controller
             'date_header' => Carbon::now()->format('Y-m-d'),
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id, // asumsi ini ikut dilempar
+            // 'user_id' => $request->user_id, // asumsi ini ikut dilempar
             'location_id' => $request->location_id, // asumsi ini ikut dilempar
 
         ]);
@@ -101,7 +102,7 @@ class ProductController extends Controller
                 'category_id' => $items[$i]['category_id'],
                 'sub_category_id' => $items[$i]['sub_category_id'],
                 'product_price' => $items[$i]['product_price'],
-                'primary_stock' => $items[$i]['primary_stock'],
+                'primary_stock' => $items[$i]['primary_stock'] ? 1 : 0,
                 // 'qty_count' => $request->qty_count, // tidak perlu krn ini utk item non primary saja
                 // 'join_id' => $request->join_id // tidak perlu krn ini utk item non primary saja
             ]);
@@ -125,7 +126,7 @@ class ProductController extends Controller
                 ], 422);
             }
         }
-   
+
         DB::commit();
 
         // posting beginning stock
@@ -234,7 +235,7 @@ class ProductController extends Controller
         ]);
     }
 
-    
+
     public function stockMutationDetail(Request $request){
 
         $sql = "
@@ -268,7 +269,7 @@ class ProductController extends Controller
         (SELECT @Balance := 0) AS variableInit
         ORDER BY X.num, X.trans_date
         ";
-        
+
         $results = DB::select($sql,[$request->start_date,$request->id_lokasi,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date,$request->id_product]);
 
         return response()->json([
@@ -276,7 +277,7 @@ class ProductController extends Controller
             'data' => $results,
         ]);
     }
-    
+
     public function stockCardAll(Request $request){
 
         $sql = "
@@ -300,7 +301,7 @@ class ProductController extends Controller
         INNER JOIN locations L ON X.trans_loc = L.id
         GROUP BY id_product, product_code, product_name, trans_loc, loc_name
         ORDER BY product_name";
-        
+
         $results = DB::select($sql,[$request->id_lokasi,$request->start_date,$request->id_lokasi,$request->start_date,$request->end_date]);
 
         return response()->json([
@@ -324,14 +325,14 @@ class ProductController extends Controller
                 from(
                     SELECT NULL AS id_product, NULL as doctype_id, NULL as doc_id, NULL AS trans_date,'Beginning Balance' AS trans_remark,'Beginning Balance' AS product_name, 0 AS trans_in, 0 AS trans_out, IFNULL(SUM(trans_qty),0) AS trans_beg
                     FROM inventory_journal
-                    WHERE id_product=? AND trans_loc=? AND trans_date<? 
+                    WHERE id_product=? AND trans_loc=? AND trans_date<?
                     UNION ALL
                     SELECT id_product, doctype_id, doc_id, trans_date, a.trans_remark, product_name, trans_in, trans_out, 0 as trans_beg
                     FROM inventory_journal AS a
                     INNER JOIN products AS b ON a.id_product=b.id
-                    WHERE id_product=? AND trans_loc=? AND trans_date BETWEEN ? AND ? 
+                    WHERE id_product=? AND trans_loc=? AND trans_date BETWEEN ? AND ?
                 )ax ,  (SELECT @Balance := 0) AS variableInit";
-        
+
         $results = DB::select($sql,[$request->id_product,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date]);
 
         // if (collect($stock_beg)->isEmpty()) {
