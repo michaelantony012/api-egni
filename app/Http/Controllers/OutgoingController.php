@@ -18,9 +18,9 @@ class OutgoingController extends Controller
     public function index()
     {
         $data = Outgoing::Join('document_flow as b', function ($join) {
-            $join->on('outgoing_invoice_h.doctype_id', 'b.doctype_id')
-                ->on('outgoing_invoice_h.flow_seq', 'b.doc_flow');
-        })->select('outgoing_invoice_h.*', 'b.flow_desc')
+            $join->on('outgoing_invoices_h.doctype_id', 'b.doctype_id')
+                ->on('outgoing_invoices_h.flow_seq', 'b.doc_flow');
+        })->select('outgoing_invoices_h.*', 'b.flow_desc')
             ->get();
         // $data = Outgoing::all();
         return response()->json([
