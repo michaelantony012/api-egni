@@ -208,13 +208,13 @@ class DocFlowController extends Controller
         $fetchflowseq = $baseheader->flow_seq;
 
         $user = 1;
-        $rs['flag'] = true;
+        $rs['status'] = true;
 		$rs['update_log'] = "";
         
         
         if($fetchdoctype!=$request->doctype_id || $fetchflowseq!=$request->flow_prev){
 			
-            $rs['flag'] = false;
+            $rs['status'] = false;
             $rs['update_log'] = "Status document not matched. Please reload the document";
             
         }else{
