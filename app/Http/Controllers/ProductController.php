@@ -16,6 +16,7 @@ use App\Http\Controllers\DocFlowController;
 use App\Http\Resources\opt_ProductResource;
 use App\Http\Controllers\BeginningStockController;
 
+
 class ProductController extends Controller
 {
     /**
@@ -319,6 +320,9 @@ class ProductController extends Controller
         //     ]);
         // }
 
+        $start_date = Carbon::create($request->start_date)->format('Y-m-d');
+        $end_date = Carbon::create($request->end_date)->format('Y-m-d');
+
         $sql = "select
                     ax.*,
                     @Balance := @Balance + trans_in + trans_out + trans_beg AS balance
@@ -333,7 +337,7 @@ class ProductController extends Controller
                     WHERE id_product=? AND trans_loc=? AND trans_date BETWEEN ? AND ?
                 )ax ,  (SELECT @Balance := 0) AS variableInit";
 
-        $results = DB::select($sql,[$request->id_product,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date]);
+        $results = DB::select($sql,[$request->id_product,$request->id_location,$start_date,$request->id_product,$request->id_location,$start_date,$end_date]);
 
         // if (collect($stock_beg)->isEmpty()) {
         //     return response()->json([

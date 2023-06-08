@@ -238,13 +238,13 @@ class DocFlowController extends Controller
 				$temp = DB::statement('CALL z_id"'.$user.'(?)',array($request->doc_id));
 				
 				if($temp[0]['msg']!=""){
-					$rs['flag'] = false;
+					$rs['status'] = false;
 					$rs['update_log'] = $temp[0]['msg'];
 				}
 
             }
 
-            if($rs['flag']){
+            if($rs['status']){
                 $query_dropupdate = "DROP PROCEDURE IF EXISTS `y_id".$user."`;";
                 \DB::unprepared($query_dropupdate);
                 
