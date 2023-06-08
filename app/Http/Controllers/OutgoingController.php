@@ -22,7 +22,7 @@ class OutgoingController extends Controller
                 ->on('outgoing_invoice_h.flow_seq', 'b.doc_flow');
         })->select('outgoing_invoice_h.*', 'b.flow_desc')
             ->get();
-        $data = Outgoing::all();
+        // $data = Outgoing::all();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'data' => OutgoingResource::collection($data),
