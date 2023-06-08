@@ -17,11 +17,11 @@ class OutgoingController extends Controller
      */
     public function index()
     {
-        // $data = Outgoing::Join('document_flow as b', function ($join) {
-        //     $join->on('purchase_invoice_h.doctype_id', 'b.doctype_id')
-        //         ->on('purchase_invoice_h.flow_seq', 'b.doc_flow');
-        // })->select('purchase_invoice_h.*', 'b.flow_desc')
-        //     ->get();
+        $data = Outgoing::Join('document_flow as b', function ($join) {
+            $join->on('outgoing_invoice_h.doctype_id', 'b.doctype_id')
+                ->on('outgoing_invoice_h.flow_seq', 'b.doc_flow');
+        })->select('outgoing_invoice_h.*', 'b.flow_desc')
+            ->get();
         $data = Outgoing::all();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
