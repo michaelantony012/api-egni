@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sales;
 use Illuminate\Http\Request;
 use App\Models\SalesDetail;
+use App\Models\SalesReturn;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\SalesResource;
 use App\Http\Resources\d_SalesResource;
@@ -257,6 +258,79 @@ class SalesController extends Controller
                 }
             }
         }
+
+        //return
+        $update_returns = $request->update_return;
+        if ($update_returns) {
+            for ($i = 0; $i < count($update_returns); $i++) {
+
+                $update_return = SalesReturn::where('id', $update_returns[$i]['id'])->first();
+                if ($update_return) {
+                    $update_return->id_product = $update_returns[$i]['id_product'];
+                    $update_return->qty = $update_returns[$i]['qty'];
+                    $update_return->keterangan = $update_returns[$i]['keterangan'];
+                    $update_return->price = $update_returns[$i]['price'];
+                    $update_return->margin = $update_returns[$i]['margin'];
+                    $update_return->disc_value = $update_returns[$i]['disc_value'];
+                    $update_return->total_price = $update_returns[$i]['total_price'];
+                    $update_return->vat_value = $update_returns[$i]['vat_value'];
+                    $update_return->disc_percent = $update_returns[$i]['disc_percent'];
+                    $update_return->vat_percent = $update_returns[$i]['vat_percent'];
+
+                    $update_return->save();
+                }
+
+                if (!$update_detail) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Gagal Update data.'
+                    ], 422);
+                }
+            }
+        }
+
+        $delete_returns = $request->delete_return;
+        if ($delete_returns) {
+            for ($i = 0; $i < count($delete_returns); $i++) {
+                $delete_return = SalesReturn::where('id', $delete_returns[$i]['id'])->delete();
+
+                if (!$delete_return) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Gagal Delete data'
+                    ], 422);
+                }
+            }
+        }
+
+        $create_returns = $request->create_return;
+        if ($create_returns) {
+            for ($i = 0; $i < count($create_returns); $i++) {
+                $create_return = SalesReturn::create([
+                    'id_header' => $request->id,
+                    'id_product' => $create_returns[$i]['id_product'],
+                    'qty' => $create_returns[$i]['qty'],
+                    'keterangan' => $create_returns[$i]['keterangan'],
+                    'price' => $create_returns[$i]['price'],
+                    'disc_value' => $create_returns[$i]['disc_value'],
+                    'total_price' => $create_returns[$i]['total_price'],
+                    'vat_value' => $create_returns[$i]['vat_value'],
+                    'disc_percent' => $create_returns[$i]['disc_percent'],
+                    'vat_percent' => $create_returns[$i]['vat_percent'],
+                ]);
+
+                if (!$create_return) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Gagal Create data'
+                    ], 422);
+                }
+            }
+        }
+        
 
         if (!$update_header1) {
             DB::rollBack();

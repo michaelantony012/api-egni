@@ -72,7 +72,8 @@ class PurchasingController extends Controller
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id,
             'location_id' => $request->location_id,
-            'supplier_id' => $request->supplier_id
+            'supplier_id' => $request->supplier_id,
+            'no_extern' => $request->no_extern
         ]);
         $detail = $request->detail;// decode ke array dulu
         // $detail = json_decode($request->detail, true); // decode ke array dulu
@@ -167,7 +168,8 @@ class PurchasingController extends Controller
             $update_header = Purchasing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
                 'date_header' => $request['date_header'],
                 'location_id' => $request['location_id'],
-                'supplier_id' => $request['supplier_id']
+                'supplier_id' => $request['supplier_id'],
+                'no_extern'   => $request['no_extern']
             ]);
             if (!$update_header) {
                 return response()->json([

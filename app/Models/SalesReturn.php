@@ -5,18 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Sales extends Model
+class SalesReturn extends Model
 {
     use HasFactory;
-    /*
+
+     /*
     |--------------------------------------------------------------------------
     | GLOBAL VARIABLES
     |--------------------------------------------------------------------------
     */
 
-    protected $table = 'sales_invoice_h';
+    protected $table = 'sales_invoice_r';
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
@@ -24,7 +24,7 @@ class Sales extends Model
     // protected $hidden = [];
     // protected $dates = [];
 
-    /*
+      /*
     |--------------------------------------------------------------------------
     | FUNCTIONS
     |--------------------------------------------------------------------------
@@ -35,38 +35,24 @@ class Sales extends Model
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function salesDetail()
-    {
-        return $this->hasMany(SalesDetail::class, 'id_header');
-    }
-
-    public function salesReturn()
-    {
-        return $this->hasMany(SalesReturn::class, 'id_header');
-    }
-
+    // public function purchasingHeader()
+    // {
+    //     return $this->belongsTo(Purchasing::class);
+    // }
     /**
-     * Get the supplier associated with the Purchasing
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class, 'customer_id', 'id');
-    }
-    /**
-     * Get the user that owns the Purchasing
+     * Get the purchasing that owns the PurchasingDetail
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo
+    public function sales(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(Sales::class, 'id_header');
     }
-    public function location(): BelongsTo
+    public function products(): BelongsTo
     {
-        return $this->belongsTo(Location::class, 'location_id', 'id');
+        return $this->belongsTo(Product::class, 'id_product');
     }
+
     /*
     |--------------------------------------------------------------------------
     | SCOPES

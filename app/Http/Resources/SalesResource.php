@@ -26,7 +26,9 @@ class SalesResource extends JsonResource
             'location' => $this->location,
             'customer' => $this->customer,
             'flow_desc' => $this->flow_desc,
+            'is_printed' => $this->is_printed,
             'detail' => $this->salesDetail->load('products'),
+            'return' => $this->salesReturn->load('products')
             // 'detail' => new d_PurchasingResource($this->purchasingDetail),
         ];
     }
