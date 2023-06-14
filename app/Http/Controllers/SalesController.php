@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Sales;
-use Illuminate\Http\Request;
+use App\Models\DocFlow;
+use App\Models\Product;
 use App\Models\SalesDetail;
 use App\Models\SalesReturn;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\SalesResource;
 use App\Http\Resources\d_SalesResource;
-use App\Models\DocFlow;
-use App\Models\Product;
 
 class SalesController extends Controller
 {
@@ -69,7 +70,7 @@ class SalesController extends Controller
     {
         DB::beginTransaction();
         $add_sales_header = Sales::create([
-            'date_header' => $request->date_header,
+            'date_header' => Carbon::now()->format('Y-m-d'),//$request->date_header,
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id,
             'location_id' => $request->location_id,

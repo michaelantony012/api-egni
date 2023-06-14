@@ -24,6 +24,21 @@ class CustomerController extends Controller
         ]);
     }
 
+    public function search(Request $request)
+    {
+        // $data = DB::table('products')->where('product_code', "LIKE", '%' . $request->words . '%')->get();
+        $data = Customer::where('customer_code', "LIKE", '%' . $request->words . '%')
+        ->orWhere('customer_name', "LIKE", '%' . $request->words . '%')
+        ->orWhere('customer_address', "LIKE", '%' . $request->words . '%')
+        ->orWhere('customer_contact', "LIKE", '%' . $request->words . '%')
+        ->get();
+        return response()->json([
+            'status' => collect($data)->isNotEmpty() ? true : false,
+            'data' => CustomerResource::collection($data),
+            'message' => 'Data berhasil di dapat'
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

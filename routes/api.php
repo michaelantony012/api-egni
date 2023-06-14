@@ -129,6 +129,7 @@ Route::controller(CustomerController::class)->group(function () {
     Route::post('/create-customer', 'create');
     Route::get('/show-customer/{id}', 'show');
     Route::post('/update-customer', 'update');
+    Route::post('/search-customer', 'search');
     Route::get('/destroy-customer/{id}', 'destroy');
 });
 Route::controller(BeginningStockController::class)->group(function () {
