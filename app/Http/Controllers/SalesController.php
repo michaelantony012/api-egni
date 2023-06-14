@@ -76,8 +76,8 @@ class SalesController extends Controller
             'location_id' => $request->location_id,
             'customer_id' => $request->customer_id
         ]);
-        $detail = $request->detail;// decode ke array dulu
-        // $detail = json_decode($request->detail, true); // decode ke array dulu
+        // $detail = $request->detail;// decode ke array dulu
+        $detail = json_decode($request->detail, true); // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_sales_detail = SalesDetail::create([
                 'id_header' => $add_sales_header->id,
