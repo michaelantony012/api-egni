@@ -15,6 +15,9 @@ use App\Http\Controllers\OutgoingController;
 use App\Http\Controllers\BeginningStockController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\APIController;
+use App\Http\Controllers\CashierPayoutController;
+use App\Http\Controllers\PaymentLogController;
+use App\Http\Controllers\PaymentMethodController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -118,7 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::controller(UserController::class)->group(function () {
         Route::get('/index-user', 'index');
-        Route::post('/create-user', 'create');
+        // Route::post('/create-user', 'create');
         Route::get('/show-user/{id}', 'show');
         Route::post('/update-user', 'update');
         Route::get('/destroy-user/{id}', 'destroy');
@@ -139,5 +142,30 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/destroy-beginningstock/{id}', 'destroy');
         Route::post('/docflow-beginningstock', 'docflow');
     });
+    Route::controller(CashierPayoutController::class)->group(function () {
+        Route::get('/index-cashierpayout', 'index');
+        Route::post('/create-cashierpayout', 'create');
+        Route::get('/show-cashierpayout/{id}', 'show');
+        Route::post('/update-cashierpayout', 'update');
+        Route::get('/destroy-cashierpayout/{id}', 'destroy');
+    });
+    Route::controller(PaymentMethodController::class)->group(function () {
+        Route::get('/index-paymentmethod', 'index');
+        Route::post('/create-paymentmethod', 'create');
+        Route::get('/show-paymentmethod/{id}', 'show');
+        Route::post('/update-paymentmethod', 'update');
+        Route::get('/destroy-paymentmethod/{id}', 'destroy');
+    });
+    Route::controller(PaymentLogController::class)->group(function () {
+        Route::get('/index-paymentlog', 'index');
+        Route::post('/create-paymentlog', 'create');
+        Route::get('/show-paymentlog/{id}', 'show');
+        Route::post('/update-paymentlog', 'update');
+        Route::get('/destroy-paymentlog/{id}', 'destroy');
+    });
 });
 
+
+Route::controller(UserController::class)->group(function () {
+    Route::post('/create-user', 'create');
+});

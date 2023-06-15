@@ -85,7 +85,6 @@ class SalesController extends Controller
             'vat_percent' => $request->vat_percent,
             'vat_value' => $request->vat_value,
             'grandtotal' => $request->grandtotal,
-            // 'grandtotal' => $request->grandtotal, (sudah menggunakan virtuality di SQL DB)
         ]);
         $detail = $request->detail;// decode ke array dulu
         // $detail = json_decode($request->detail, true); // decode ke array dulu
