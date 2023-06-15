@@ -27,6 +27,16 @@ class SalesResource extends JsonResource
             'customer' => $this->customer,
             'flow_desc' => $this->flow_desc,
             'is_printed' => $this->is_printed,
+            'subtotal' => $this->subtotal,
+            'disc_value' => $this->disc_value,
+            'disc_percent' => $this->disc_percent,
+            'disc_percentvalue' => $this->disc_percentvalue,
+            'extra_charge' => $this->extra_charge,
+            'dpp' => $this->dpp, // subtotal - disc_value - discpercentvalue + extra_charge
+            'vat_type' => $this->vat_type,
+            'vat_percent' => $this->vat_percent,
+            'vat_value' => $this->vat_value, // vat_percent x dpp
+            'grandtotal' => $this->grandtotal, // dpp + vat_value
             'detail' => $this->salesDetail->load('products'),
             'return' => $this->salesReturn->load('products')
             // 'detail' => new d_PurchasingResource($this->purchasingDetail),

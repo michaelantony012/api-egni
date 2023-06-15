@@ -74,10 +74,21 @@ class SalesController extends Controller
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id,
             'location_id' => $request->location_id,
-            'customer_id' => $request->customer_id
+            'customer_id' => $request->customer_id,
+            'subtotal' => $request->subtotal,
+            'disc_value' => $request->disc_value,
+            'disc_percent' => $request->disc_percent,
+            'disc_percentvalue' => $request->disc_percentvalue,
+            'extra_charge' => $request->extra_charge,
+            'dpp' => $request->dpp,
+            'vat_type' => $request->vat_type,
+            'vat_percent' => $request->vat_percent,
+            'vat_value' => $request->vat_value,
+            'grandtotal' => $request->grandtotal,
+            // 'grandtotal' => $request->grandtotal, (sudah menggunakan virtuality di SQL DB)
         ]);
-        // $detail = $request->detail;// decode ke array dulu
-        $detail = json_decode($request->detail, true); // decode ke array dulu
+        $detail = $request->detail;// decode ke array dulu
+        // $detail = json_decode($request->detail, true); // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_sales_detail = SalesDetail::create([
                 'id_header' => $add_sales_header->id,
@@ -170,7 +181,17 @@ class SalesController extends Controller
             $update_header = Sales::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
                 'date_header' => $request['date_header'],
                 'location_id' => $request['location_id'],
-                'customer_id' => $request['customer_id']
+                'customer_id' => $request['customer_id'],
+                'subtotal' => $request['subtotal'],
+                'disc_value' => $request['disc_value'],
+                'disc_percent' => $request['disc_percent'],
+                'disc_percentvalue' => $request['disc_percentvalue'],
+                'extra_charge' => $request['extra_charge'],
+                'dpp' => $request['dpp'],
+                'vat_type' => $request['vat_type'],
+                'vat_percent' => $request['vat_percent'],
+                'vat_value' => $request['vat_value'],
+                'grandtotal' => $request['grandtotal']
             ]);
             if (!$update_header) {
                 return response()->json([
