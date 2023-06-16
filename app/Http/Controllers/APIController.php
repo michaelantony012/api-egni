@@ -15,7 +15,7 @@ class APIController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'device_name' => 'required',
+            'location_id' => 'required',
         ]);
         // $add_user = User::create([
         //     'name' => 'Andreas Christian',
@@ -23,20 +23,23 @@ class APIController extends Controller
         //     'password' => Hash::make($request->password)
         // ]);
         $user = User::where('email', $request->input('email'))->first();
-  
-        if (! $user || ! Hash::check($request->input('password'), $user->password)) {
+
+        if (!$user || !Hash::check($request->input('password'), $user->password)) {
             return response()->json([
                 'error' => 'The provided credentials are incorrect.'
             ]);
         }
         // Revoke previous tokens
         $user->tokens()->delete();
-        
-        $token = $user->createToken($request->input('device_name'))->plainTextToken;
- 
+
+        $token = $user->createToken($request->input('location_id'))->plainTextToken;
+
         return response()->json([
+            'status' => collect($token)->isNotEmpty() ? true : false,
+            'message' => $user ? `Login berhasil` : `Login Gagal`,
+            'data_user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer'
         ]);
-    }   
+    }
 }

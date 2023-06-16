@@ -31,7 +31,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 Route::post('/sanctum/token', 'App\Http\Controllers\APIController@create_token');
+Route::get('/index-location', [LocationController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
     // return $request->user();
     Route::controller(CategoryController::class)->group(function () {
@@ -56,7 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/destroy-supplier/{id}', 'destroy');
     });
     Route::controller(LocationController::class)->group(function () {
-        Route::get('/index-location', 'index');
+
         Route::post('/create-location', 'create');
         Route::get('/show-location/{id}', 'show');
         Route::post('/update-location', 'update');
