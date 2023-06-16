@@ -38,6 +38,7 @@ class APIController extends Controller
             'status' => collect($token)->isNotEmpty() ? true : false,
             'message' => $user ? `Login berhasil` : `Login Gagal`,
             'data_user' => $user,
+            'location_id' => $request->input('location_id'),
             'access_token' => $token,
             'token_type' => 'Bearer'
         ]);
