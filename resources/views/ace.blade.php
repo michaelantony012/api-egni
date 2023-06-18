@@ -46,7 +46,12 @@
             cache: false,
             success: function(response)
             {
-				editor.setValue(response["msg"].query_update);
+                if(gType=='update'){
+                    editor.setValue(response["msg"].query_update);
+                }else{
+                    editor.setValue(response["msg"].query_check);
+                }
+				
             }
         });
     });

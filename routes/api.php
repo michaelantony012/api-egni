@@ -109,18 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/destroy-sales/{id}', 'destroy');
         Route::post('/docflow-sales', 'docflow');
     });
-    Route::controller(DocFlowController::class)->group(function () {
-        Route::get('/index-document', 'index');
-        Route::post('/create-document', 'create');
-        Route::get('/show-document/{id}', 'show');
-        Route::post('/update-document', 'update');
-        Route::get('/destroy-document/{id}', 'destroy');
-        Route::get('/oeditor-document/{id}/{type}', 'openEditor');
-        Route::get('/geditor-document', 'getDataEditor')->name('data.editor');
-        Route::post('/ueditor-document', 'updateEditor')->name('update.editor');
-        Route::post('/logic-document', 'getFlowLogic');
-        Route::post('/update-flow', 'updateFlow');
-    });
+
     Route::controller(UserController::class)->group(function () {
         Route::get('/index-user', 'index');
         // Route::post('/create-user', 'create');
@@ -170,4 +159,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::controller(UserController::class)->group(function () {
     Route::post('/create-user', 'create');
+});
+Route::controller(DocFlowController::class)->group(function () {
+    Route::get('/index-document', 'index');
+    Route::post('/create-document', 'create');
+    Route::get('/show-document/{id}', 'show');
+    Route::post('/update-document', 'update');
+    Route::get('/destroy-document/{id}', 'destroy');
+    Route::get('/oeditor-document/{id}/{type}', 'openEditor');
+    Route::get('/geditor-document', 'getDataEditor')->name('data.editor');
+    Route::post('/ueditor-document', 'updateEditor')->name('update.editor');
+    Route::post('/logic-document', 'getFlowLogic');
+    Route::post('/update-flow', 'updateFlow');
 });

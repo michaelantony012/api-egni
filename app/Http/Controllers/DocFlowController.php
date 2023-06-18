@@ -177,7 +177,7 @@ class DocFlowController extends Controller
             if($request->gtype=='update'){
                 $query = DocFlowLogic::where('id',$request->transid)->select('query_update')->first();
             }else if($request->gtype=='check'){
-                $query = "";
+                $query = DocFlowLogic::where('id',$request->transid)->select('query_check')->first();
             }
             return response()->json(['msg'=>$query]);
         }else{
@@ -206,7 +206,7 @@ class DocFlowController extends Controller
 
         $fetchdoctype = $baseheader->doctype_id;
         $fetchflowseq = $baseheader->flow_seq;
-
+        
         $user = 1;
         $rs['status'] = true;
 		$rs['update_log'] = "";
@@ -235,11 +235,11 @@ class DocFlowController extends Controller
 				\DB::unprepared($query_check);
 				
 				// $query_call = "CALL z_id".$user."($doc_id);";
-				$temp = DB::statement('CALL z_id"'.$user.'(?)',array($request->doc_id));
-				
-				if($temp[0]['msg']!=""){
+				$temp = DB::select('CALL z_id'.$user.'(?)',array($request->doc_id));
+         
+				if($temp[0]->msg !=""){
 					$rs['status'] = false;
-					$rs['update_log'] = $temp[0]['msg'];
+					$rs['update_log'] = $temp[0]->msg;
 				}
 
             }
