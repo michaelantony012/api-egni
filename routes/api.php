@@ -65,7 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/destroy-location/{id}', 'destroy');
     });
     Route::controller(ProductController::class)->group(function () {
-        Route::get('/index-product', 'index');
+        Route::post('/index-product', 'index');
         Route::get('/index-opt-product', 'optionIndex');
         Route::post('/search-product', 'search');
         Route::post('/create-product', 'create');

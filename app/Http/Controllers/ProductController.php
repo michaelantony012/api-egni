@@ -24,9 +24,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = Product::all();
+        // $data = Product::all();
+        $data = Product::paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'data' => ProductResource::collection($data),
