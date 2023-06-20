@@ -75,16 +75,23 @@ class SalesController extends Controller
             'user_id' => $request->user_id,
             'location_id' => $request->location_id,
             'customer_id' => $request->customer_id,
-            'subtotal' => $request->subtotal,
+            //'subtotal' => $request->subtotal, // dicalculate dibawah
+            'subtotal' => 0,
             'disc_value' => $request->disc_value,
             'disc_percent' => $request->disc_percent,
-            'disc_percentvalue' => $request->disc_percentvalue,
+            // 'disc_percentvalue' => $request->disc_percentvalue,
+            'disc_percentvalue' => 0,
             'extra_charge' => $request->extra_charge,
-            'dpp' => $request->dpp,
-            'vat_type' => $request->vat_type,
-            'vat_percent' => $request->vat_percent,
-            'vat_value' => $request->vat_value,
-            'grandtotal' => $request->grandtotal,
+            // 'dpp' => $request->dpp, // dicalculate dibawah
+            // 'vat_type' => $request->vat_type, // ppn belum kepake
+            // 'vat_percent' => $request->vat_percent,
+            // 'vat_value' => $request->vat_value,
+            // 'grandtotal' => $request->grandtotal,
+            'dpp' => 0,
+            'vat_type' => 0,
+            'vat_percent' => 0,
+            'vat_value' => 0,
+            'grandtotal' => 0,
         ]);
         $detail = $request->detail;// decode ke array dulu
         // $detail = json_decode($request->detail, true); // decode ke array dulu
@@ -112,7 +119,12 @@ class SalesController extends Controller
             }
         }
         // DB::rollBack(); // testing
+
         DB::commit();
+
+        // sales invoice calculate
+        DB::select('call SalesInvoice_CalculateTotal(?)',array($add_sales_header->id));
+
         return response()->json([
             'status' => true,
             'message' => 'Data berhasil ditambahkan',
@@ -181,16 +193,23 @@ class SalesController extends Controller
                 'date_header' => $request['date_header'],
                 'location_id' => $request['location_id'],
                 'customer_id' => $request['customer_id'],
-                'subtotal' => $request['subtotal'],
+                // 'subtotal' => $request['subtotal'],// dicalculate di bawah
+                'subtotal' => 0,
                 'disc_value' => $request['disc_value'],
                 'disc_percent' => $request['disc_percent'],
-                'disc_percentvalue' => $request['disc_percentvalue'],
+                // 'disc_percentvalue' => $request['disc_percentvalue'],
+                'disc_percentvalue' => 0,
                 'extra_charge' => $request['extra_charge'],
-                'dpp' => $request['dpp'],
-                'vat_type' => $request['vat_type'],
-                'vat_percent' => $request['vat_percent'],
-                'vat_value' => $request['vat_value'],
-                'grandtotal' => $request['grandtotal']
+                // 'dpp' => $request['dpp'], // dicalculate di bawah
+                // 'vat_type' => $request['vat_type'], // ppn blm kepake
+                // 'vat_percent' => $request['vat_percent'],
+                // 'vat_value' => $request['vat_value'],
+                // 'grandtotal' => $request['grandtotal']
+                'dpp' => 0,
+                'vat_type' => 0,
+                'vat_percent' =>0 ,
+                'vat_value' => 0,
+                'grandtotal' => 0
             ]);
             if (!$update_header) {
                 return response()->json([
@@ -357,6 +376,10 @@ class SalesController extends Controller
             DB::rollBack();
         }
         DB::commit();
+
+        // sales invoice calculate
+        DB::select('call SalesInvoice_CalculateTotal(?)',array($update_header1->id));
+
         return response()->json([
             'status' => $update_header1 ? true : false,
             'message' => $update_header1 ? 'Berhasil di update' : 'Gagal diupdate'
