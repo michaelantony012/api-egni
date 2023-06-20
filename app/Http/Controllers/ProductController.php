@@ -30,6 +30,8 @@ class ProductController extends Controller
         $data = Product::paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
+            'first_page' => 1,
+            'last_page' => ceil( $data->total() / $data->perPage() ),
             'data' => ProductResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);
@@ -46,7 +48,8 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         // $data = DB::table('products')->where('product_code', "LIKE", '%' . $request->words . '%')->get();
-        $data = Product::where('product_code', "LIKE", '%' . $request->words . '%')
+        // $data = Product::where('product_code', "LIKE", '%' . $request->words . '%')
+        $data = Product::where('barcode', "LIKE", '%' . $request->words . '%')
         ->where('primary_stock', true)
         ->get();
         return response()->json([
