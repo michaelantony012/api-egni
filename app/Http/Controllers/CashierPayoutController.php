@@ -32,7 +32,7 @@ class CashierPayoutController extends Controller
         // DB::rollBack(); // testing
         DB::commit();
 
-        if($request->is_posting==1)
+        if($request->is_posting)
         {
             // recording
             $updbegflow1 = new DocFlowController();
@@ -53,7 +53,7 @@ class CashierPayoutController extends Controller
             ]);
             $updbegflow1->updateFlow($content1);
         }
-        else if($request->is_posting==0)
+        else if(!$request->is_posting)
         {
             // recording
             $updbegflow1 = new DocFlowController();
