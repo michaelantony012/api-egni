@@ -18,10 +18,10 @@ class PaymentMethodResource extends JsonResource
         // dd($this->purchasingDetail);
         return [
             'id' => $this->id,
-            'payment_name' => $this->payment_name,
-            'payment_charge' => $this->payment_charge,
-            'account_number' => $this->account_number,
-            'account_name' => $this->account_name,
+            'payment_name' => $this->payment_name . "::" . $this->account_name . "(" . $this->account_number . ")",
+            // 'payment_charge' => $this->payment_charge,
+            // 'account_number' => $this->account_number,
+            // 'account_name' => $this->account_name,
             'bank' => $this->bank
         ];
     }
