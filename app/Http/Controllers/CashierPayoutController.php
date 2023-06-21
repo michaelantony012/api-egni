@@ -25,9 +25,9 @@ class CashierPayoutController extends Controller
         DB::beginTransaction();
         $add = CashierPayout::create([
             'id_user' => $request->user_id,
-            'cash_in' => $request->cash_in,
-            'cash_out' => $request->cash_out,
-            'online_payment' => $request->online_payment
+            'cash_in' => $request->cash_in, // saldo awal kasir
+            'cash_out' => $request->cash_in, // transaksi kasir, awalan sama dgn cash_in
+            'online_payment' => 0 // transaksi kasir, awalan pasti 0
         ]);
         // DB::rollBack(); // testing
         DB::commit();
@@ -42,9 +42,9 @@ class CashierPayoutController extends Controller
         $data = CashierPayout::where('id_user', '=', $id_user)->first();
 
         return response()->json([
-            'status' => $data->isEmpty() ? false : true,
-            'data' => new CashierPayoutResource($data),
-            'message' => $data->isEmpty() ? 'Tidak ada data' : 'Data berhasil di dapat'
+            'status' => $data ? true : false,
+            'data' => $data ? new CashierPayoutResource($data) : "",
+            'message' => $data ? 'Data berhasil di dapat' : 'Tidak ada data'
         ]);
     }
     public function update(Request $request, CashierPayout $cashierPayout)
