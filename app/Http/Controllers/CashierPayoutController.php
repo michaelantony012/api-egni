@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Carbon\Carbon;
 use App\Models\CashierPayout;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 
 class CashierPayoutController extends Controller
 {
-    
+
     public function index()
     {
         $data = CashierPayout::all();
@@ -24,7 +25,7 @@ class CashierPayoutController extends Controller
     {
         DB::beginTransaction();
         $add = CashierPayout::create([
-            'id_user' => $request->user_id,
+            'id_user' => $request->id_user,
             'cash_in' => $request->cash_in, // saldo awal kasir
             'cash_out' => $request->cash_in, // transaksi kasir, awalan sama dgn cash_in
             'online_payment' => 0 // transaksi kasir, awalan pasti 0
@@ -32,8 +33,7 @@ class CashierPayoutController extends Controller
         // DB::rollBack(); // testing
         DB::commit();
 
-        if($request->is_posting)
-        {
+        if ($request->is_posting) {
             // recording
             $updbegflow1 = new DocFlowController();
             $content1 = new Request([
@@ -43,7 +43,7 @@ class CashierPayoutController extends Controller
                 'flow_next' => 10
             ]);
             $updbegflow1->updateFlow($content1);
-            
+
             // posting
             $content1 = new Request([
                 'doctype_id' => 5,
@@ -52,9 +52,7 @@ class CashierPayoutController extends Controller
                 'flow_next' => 100
             ]);
             $updbegflow1->updateFlow($content1);
-        }
-        else if(!$request->is_posting)
-        {
+        } else if (!$request->is_posting) {
             // recording
             $updbegflow1 = new DocFlowController();
             $content1 = new Request([
@@ -77,8 +75,8 @@ class CashierPayoutController extends Controller
         $data = CashierPayout::where('id_user', '=', $id_user)->whereDate('created_at', Carbon::today())->get();
 
         return response()->json([
-            'status' => $data ? true : false,
-            'data' => $data ? new CashierPayoutResource($data) : "",
+            'status' => collect($data)->isNotEmpty() ? true : false,
+            'data' => CashierPayoutResource::collection($data),
             'message' => $data ? 'Data berhasil di dapat' : 'Tidak ada data'
         ]);
     }
@@ -94,7 +92,6 @@ class CashierPayoutController extends Controller
                 // 'cash_out' => $request['cash_out'],
                 // 'online_payment' => $request['online_payment']
             ]);
-
         }
         if (!$update_data) {
             DB::rollBack();
