@@ -207,7 +207,7 @@ class DocFlowController extends Controller
         $fetchdoctype = $baseheader->doctype_id;
         $fetchflowseq = $baseheader->flow_seq;
         
-        $user = 1;
+        $user = $request->id_user;
         $rs['status'] = true;
 		$rs['update_log'] = "";
         
@@ -249,7 +249,7 @@ class DocFlowController extends Controller
                 \DB::unprepared($query_dropupdate);
                 
                 $query_update = "
-                CREATE PROCEDURE `y_id".$user."`(xdocumentid INT, xflowprev INT, xflownext INT)
+                CREATE PROCEDURE `y_id".$user."`(xdocumentid INT, xflowprev INT, xflownext INT, xuserid INT)
                 BEGIN
                 
                     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -262,6 +262,7 @@ class DocFlowController extends Controller
                     set @docid = xdocumentid;
                     set @flowprev = xflowprev;
                     set @flownext = xflownext;
+                    set @userid = xuserid;
                     
                     UPDATE $basetable->doctype_table SET flow_seq = @flownext where id = @docid and flow_seq = @flowprev;	
                     
@@ -272,7 +273,7 @@ class DocFlowController extends Controller
                     
                 END;";
                 \DB::unprepared($query_update);
-                \DB::statement('CALL y_id'.$user.'(?,?,?)',array($request->doc_id,$request->flow_prev,$request->flow_next));
+                \DB::statement('CALL y_id'.$user.'(?,?,?,?)',array($request->doc_id,$request->flow_prev,$request->flow_next,$user));
                 \DB::unprepared($query_dropupdate.$query_dropcheck);
             }
             
