@@ -103,12 +103,12 @@ class SalesController extends Controller
                 'qty' => $detail[$i]['qty'],
                 // 'keterangan' => $detail[$i]['keterangan'],
                 // 'margin' => $detail[$i]['margin'],
-                'price' => $detail[$i]['price'],
+                'price' => $detail[$i]['product_price'],
                 'disc_value' => $detail[$i]['disc_value'],
-                // 'total_price' => $detail[$i]['total_price'],
-                'vat_value' => $detail[$i]['vat_value'],
-                'disc_percent' => $detail[$i]['disc_percent'],
-                'vat_percent' => $detail[$i]['vat_percent'],
+                'total_price' => ($detail[$i]['qty']*$detail[$i]['product_price'])-$detail[$i]['disc_value'],
+                'vat_value' => 0,
+                'disc_percent' => 0,
+                'vat_percent' => 0,
             ]);
 
             if (!$add_sales_detail || !$add_sales_header) {
