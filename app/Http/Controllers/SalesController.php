@@ -125,6 +125,39 @@ class SalesController extends Controller
         // sales invoice calculate
         DB::select('call SalesInvoice_CalculateTotal(?)',array($add_sales_header->id));
 
+        // update doc flow
+        if ($request->is_posting) {
+            // recording
+            $updbegflow1 = new DocFlowController();
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'doc_id' => $add_sales_header->id,
+                'flow_prev' => 1,
+                'flow_next' => 10
+            ]);
+            $updbegflow1->updateFlow($content1);
+
+            // posting
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'doc_id' => $add_sales_header->id,
+                'flow_prev' => 10,
+                'flow_next' => 100
+            ]);
+            $updbegflow1->updateFlow($content1);
+        } else if (!$request->is_posting) {
+            // recording
+            $updbegflow1 = new DocFlowController();
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'doc_id' => $add_sales_header->id,
+                'flow_prev' => 1,
+                'flow_next' => 10
+            ]);
+            $updbegflow1->updateFlow($content1);
+        }
+
+
         return response()->json([
             'status' => true,
             'message' => 'Data berhasil ditambahkan',
