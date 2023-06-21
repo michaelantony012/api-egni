@@ -31,6 +31,41 @@ class CashierPayoutController extends Controller
         ]);
         // DB::rollBack(); // testing
         DB::commit();
+
+        if($request->is_posting==1)
+        {
+            // recording
+            $updbegflow1 = new DocFlowController();
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'doc_id' => $add->id,
+                'flow_prev' => 1,
+                'flow_next' => 10
+            ]);
+            $updbegflow1->updateFlow($content1);
+            
+            // posting
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'doc_id' => $add->id,
+                'flow_prev' => 10,
+                'flow_next' => 100
+            ]);
+            $updbegflow1->updateFlow($content1);
+        }
+        else if($request->is_posting==0)
+        {
+            // recording
+            $updbegflow1 = new DocFlowController();
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'doc_id' => $add->id,
+                'flow_prev' => 1,
+                'flow_next' => 10
+            ]);
+            $updbegflow1->updateFlow($content1);
+        }
+
         return response()->json([
             'status' => true,
             'message' => 'Data berhasil ditambahkan',
@@ -39,7 +74,7 @@ class CashierPayoutController extends Controller
     }
     public function show($id_user)
     {
-        $data = CashierPayout::where('id_user', '=', $id_user)->first();
+        $data = CashierPayout::where('id_user', '=', $id_user)->whereDate('created_at', Carbon::today())->get();
 
         return response()->json([
             'status' => $data ? true : false,
@@ -56,8 +91,8 @@ class CashierPayoutController extends Controller
             $update_data = CashierPayout::where('id', '=', $request->id)->update([
                 'id_user' => $request['id_user'],
                 'cash_in' => $request['cash_in'],
-                'cash_out' => $request['cash_out'],
-                'online_payment' => $request['online_payment']
+                // 'cash_out' => $request['cash_out'],
+                // 'online_payment' => $request['online_payment']
             ]);
 
         }
