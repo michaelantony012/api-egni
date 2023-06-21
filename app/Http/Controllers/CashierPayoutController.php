@@ -42,8 +42,9 @@ class CashierPayoutController extends Controller
         $data = CashierPayout::where('id_user', '=', $id_user)->first();
 
         return response()->json([
+            'status' => $data->isEmpty() ? false : true,
             'data' => new CashierPayoutResource($data),
-            'message' => 'Data berhasil di dapat'
+            'message' => $data->isEmpty() ? 'Tidak ada data' : 'Data berhasil di dapat'
         ]);
     }
     public function update(Request $request, CashierPayout $cashierPayout)
