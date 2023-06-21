@@ -37,9 +37,9 @@ class CashierPayoutController extends Controller
             'id_header' => $add->id // id header document
         ]);
     }
-    public function show($id)
+    public function show($id_user)
     {
-        $data = CashierPayout::findOrFail($id);
+        $data = CashierPayout::where('id_user', '=', $id_user)->first();
 
         return response()->json([
             'data' => new CashierPayoutResource($data),

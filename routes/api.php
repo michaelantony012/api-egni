@@ -136,7 +136,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CashierPayoutController::class)->group(function () {
         Route::get('/index-cashierpayout', 'index');
         Route::post('/create-cashierpayout', 'create');
-        Route::get('/show-cashierpayout/{id}', 'show');
+        Route::get('/show-cashierpayout/{id_user}', 'show');
         Route::post('/update-cashierpayout', 'update');
         Route::get('/destroy-cashierpayout/{id}', 'destroy');
     });
