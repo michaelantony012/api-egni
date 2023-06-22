@@ -207,7 +207,7 @@ class DocFlowController extends Controller
         $fetchdoctype = $baseheader->doctype_id;
         $fetchflowseq = $baseheader->flow_seq;
         
-        $user = $request->id_user;
+        $user = $request->user_id;
         $rs['status'] = true;
 		$rs['update_log'] = "";
         

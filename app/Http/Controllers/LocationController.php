@@ -90,6 +90,7 @@ class LocationController extends Controller
             ->update([
                 'loc_name' => $request->loc_name,
                 'loc_address' => $request->loc_address,
+                'loc_contact' => $request->loc_contact
             ]);
 
         return response()->json([
