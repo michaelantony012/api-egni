@@ -23,8 +23,8 @@ class SalesResource extends JsonResource
             'flow_seq' => $this->flow_seq,
             'doctype_id' => $this->doctype_id,
             'user' => $this->user->name,
-            'location' => $this->location,
-            'customer' => $this->customer,
+            'location' => $this->loc_name,
+            'customer' => $this->customer_name,
             'flow_desc' => $this->flow_desc,
             'is_printed' => $this->is_printed,
             'subtotal' => $this->subtotal,
@@ -37,8 +37,8 @@ class SalesResource extends JsonResource
             'vat_percent' => $this->vat_percent,
             'vat_value' => $this->vat_value, // vat_percent x dpp
             'grandtotal' => $this->grandtotal, // dpp + vat_value
-            'detail' => $this->salesDetail->load('products'),
-            'return' => $this->salesReturn->load('products')
+            // 'detail' => $this->salesDetail->load('products'),
+            // 'return' => $this->salesReturn->load('products')
             // 'detail' => new d_PurchasingResource($this->purchasingDetail),
         ];
     }

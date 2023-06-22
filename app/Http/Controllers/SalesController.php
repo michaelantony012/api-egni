@@ -25,7 +25,10 @@ class SalesController extends Controller
         $data = Sales::Join('document_flow as b', function ($join) {
             $join->on('sales_invoice_h.doctype_id', 'b.doctype_id')
                 ->on('sales_invoice_h.flow_seq', 'b.doc_flow');
-        })->select('sales_invoice_h.*', 'b.flow_desc')
+            })
+            ->join('locations as c','sales_invoice_h.location_id','c.id')
+            ->join('customers as d','sales_invoice_h.customer_id','d.id')
+            ->select('sales_invoice_h.*', 'b.flow_desc','c.loc_name', 'd.customer_name')
             ->get();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
