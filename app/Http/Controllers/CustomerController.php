@@ -46,6 +46,7 @@ class CustomerController extends Controller
         $create = Customer::create($request->all());
         return response()->json([
             'status' => $create ? true : false,
+            'data' => $create,
             'message' => $create ? 'Berhasil' : 'Gagal'
         ]);
     }

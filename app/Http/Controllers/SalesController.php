@@ -73,7 +73,7 @@ class SalesController extends Controller
     {
         DB::beginTransaction();
         $add_sales_header = Sales::create([
-            'date_header' => Carbon::now()->format('Y-m-d'),//$request->date_header,
+            'date_header' => Carbon::now()->format('Y-m-d'), //$request->date_header,
             'no_header' => "", //dibuat otomatis pada saat posting
             'user_id' => $request->user_id,
             'location_id' => $request->location_id,
@@ -97,7 +97,7 @@ class SalesController extends Controller
             'grandtotal' => 0,
 
         ]);
-        $detail = $request->detail;// decode ke array dulu
+        $detail = $request->detail; // decode ke array dulu
         // $detail = json_decode($request->detail, true); // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_sales_detail = SalesDetail::create([
@@ -108,7 +108,7 @@ class SalesController extends Controller
                 // 'margin' => $detail[$i]['margin'],
                 'price' => $detail[$i]['product']['product_price'],
                 'disc_value' => $detail[$i]['disc_value'],
-                'total_price' => ($detail[$i]['qty']*$detail[$i]['product']['product_price'])-$detail[$i]['disc_value'],
+                'total_price' => ($detail[$i]['qty'] * $detail[$i]['product']['product_price']) - $detail[$i]['disc_value'],
                 'vat_value' => 0,
                 'disc_percent' => 0,
                 'vat_percent' => 0,
@@ -127,7 +127,7 @@ class SalesController extends Controller
         DB::commit();
 
         // sales invoice calculate
-        DB::select('call SalesInvoice_CalculateTotal(?)',array($add_sales_header->id));
+        DB::select('call SalesInvoice_CalculateTotal(?)', array($add_sales_header->id));
 
         // update doc flow
         if ($request->is_posting) {
@@ -135,6 +135,7 @@ class SalesController extends Controller
             $updbegflow1 = new DocFlowController();
             $content1 = new Request([
                 'doctype_id' => 5,
+                'user_id' => $request->user_id,
                 'doc_id' => $add_sales_header->id,
                 'flow_prev' => 1,
                 'flow_next' => 10
@@ -144,6 +145,7 @@ class SalesController extends Controller
             // posting
             $content1 = new Request([
                 'doctype_id' => 5,
+                'user_id' => $request->user_id,
                 'doc_id' => $add_sales_header->id,
                 'flow_prev' => 10,
                 'flow_next' => 100
@@ -154,6 +156,7 @@ class SalesController extends Controller
             $updbegflow1 = new DocFlowController();
             $content1 = new Request([
                 'doctype_id' => 5,
+                'user_id' => $request->user_id,
                 'doc_id' => $add_sales_header->id,
                 'flow_prev' => 1,
                 'flow_next' => 10
@@ -165,7 +168,9 @@ class SalesController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Data berhasil ditambahkan',
-            'id_header' => $add_sales_header->id // id header document
+            'is_saved' => $request->is_posting,
+            'id_header' => $add_sales_header->id, // id header document,
+            'created_at' => $add_sales_header->created_at // id header document
         ]);
     }
 
@@ -244,7 +249,7 @@ class SalesController extends Controller
                 // 'grandtotal' => $request['grandtotal']
                 'dpp' => 0,
                 'vat_type' => 0,
-                'vat_percent' =>0 ,
+                'vat_percent' => 0,
                 'vat_value' => 0,
                 'grandtotal' => 0
             ]);
@@ -415,7 +420,7 @@ class SalesController extends Controller
         DB::commit();
 
         // sales invoice calculate
-        DB::select('call SalesInvoice_CalculateTotal(?)',array($update_header1->id));
+        DB::select('call SalesInvoice_CalculateTotal(?)', array($update_header1->id));
 
         return response()->json([
             'status' => $update_header1 ? true : false,

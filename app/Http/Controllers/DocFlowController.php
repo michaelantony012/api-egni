@@ -181,7 +181,7 @@ class DocFlowController extends Controller
             }
             return response()->json(['msg'=>$query]);
         }else{
-            return response()->json(['msg'=>'No Ajax Request!']); 
+            return response()->json(['msg'=>'No Ajax Request!']);
         }
     }
 
@@ -194,7 +194,7 @@ class DocFlowController extends Controller
             }
             return response()->json(['msg'=>'Success Update!']);
         }else{
-            return response()->json(['msg'=>'No Ajax Request!']); 
+            return response()->json(['msg'=>'No Ajax Request!']);
         }
     }
 
@@ -206,21 +206,25 @@ class DocFlowController extends Controller
 
         $fetchdoctype = $baseheader->doctype_id;
         $fetchflowseq = $baseheader->flow_seq;
+<<<<<<< Updated upstream
         
+=======
+
+>>>>>>> Stashed changes
         $user = $request->user_id;
         $rs['status'] = true;
 		$rs['update_log'] = "";
-        
-        
+
+
         if($fetchdoctype!=$request->doctype_id || $fetchflowseq!=$request->flow_prev){
-			
+
             $rs['status'] = false;
             $rs['update_log'] = "Status document not matched. Please reload the document";
-            
+
         }else{
             $query_dropcheck = "";
             if(!is_null($logic->query_check) && trim($logic->query_check)!=''){
-                
+
 
                 $query_dropcheck = "DROP PROCEDURE IF EXISTS `z_id".$user."`;";
                 \DB::unprepared($query_dropcheck);
@@ -231,12 +235,12 @@ class DocFlowController extends Controller
 					set @docid = _documentid;
 					".$logic->query_check."
 					SELECT @msg AS msg;
-				END;";				
+				END;";
 				\DB::unprepared($query_check);
-				
+
 				// $query_call = "CALL z_id".$user."($doc_id);";
 				$temp = DB::select('CALL z_id'.$user.'(?)',array($request->doc_id));
-         
+
 				if($temp[0]->msg !=""){
 					$rs['status'] = false;
 					$rs['update_log'] = $temp[0]->msg;
@@ -247,43 +251,43 @@ class DocFlowController extends Controller
             if($rs['status']){
                 $query_dropupdate = "DROP PROCEDURE IF EXISTS `y_id".$user."`;";
                 \DB::unprepared($query_dropupdate);
-                
+
                 $query_update = "
                 CREATE PROCEDURE `y_id".$user."`(xdocumentid INT, xflowprev INT, xflownext INT, xuserid INT)
                 BEGIN
-                
+
                     DECLARE EXIT HANDLER FOR SQLEXCEPTION
                     BEGIN
                         ROLLBACK;
                         SHOW ERRORS;
                     END;
                     START TRANSACTION;
-                    
+
                     set @docid = xdocumentid;
                     set @flowprev = xflowprev;
                     set @flownext = xflownext;
                     set @userid = xuserid;
-                    
-                    UPDATE $basetable->doctype_table SET flow_seq = @flownext where id = @docid and flow_seq = @flowprev;	
-                    
-                    ".(is_null($logic->query_update)?"":$logic->query_update)."				
-                    
+
+                    UPDATE $basetable->doctype_table SET flow_seq = @flownext where id = @docid and flow_seq = @flowprev;
+
+                    ".(is_null($logic->query_update)?"":$logic->query_update)."
+
                     COMMIT;
-                
-                    
+
+
                 END;";
                 \DB::unprepared($query_update);
                 \DB::statement('CALL y_id'.$user.'(?,?,?,?)',array($request->doc_id,$request->flow_prev,$request->flow_next,$user));
                 \DB::unprepared($query_dropupdate.$query_dropcheck);
             }
-            
+
         }
         return $rs;
     }
 
     public function getFlowLogic(Request $request){
         $logic = DocFlowLogic::where('doctype_id', $request->doctype_id)->where('flow_prev', $request->flow_prev)
-                    ->select('id','doctype_id','flow_prev','flow_next','flow_desc')->get(); 
+                    ->select('id','doctype_id','flow_prev','flow_next','flow_desc')->get();
         return response()->json([
             'status' => $logic->isNotEmpty() ? true : false,
             'data' => $logic,
