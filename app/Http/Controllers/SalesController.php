@@ -20,7 +20,7 @@ class SalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $data = Sales::Join('document_flow as b', function ($join) {
             $join->on('sales_invoice_h.doctype_id', 'b.doctype_id')
@@ -29,9 +29,11 @@ class SalesController extends Controller
             ->join('locations as c','sales_invoice_h.location_id','c.id')
             ->join('customers as d','sales_invoice_h.customer_id','d.id')
             ->select('sales_invoice_h.*', 'b.flow_desc','c.loc_name', 'd.customer_name')
-            ->get();
+            ->paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
+            'first_page' => 1,
+            'last_page' => ceil( $data->total() / $data->perPage() ),
             'data' => SalesResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);

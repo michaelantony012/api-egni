@@ -37,8 +37,8 @@ class SalesResource extends JsonResource
             'vat_percent' => $this->vat_percent,
             'vat_value' => $this->vat_value, // vat_percent x dpp
             'grandtotal' => $this->grandtotal, // dpp + vat_value
-            // 'detail' => $this->salesDetail->load('products'),
-            // 'return' => $this->salesReturn->load('products')
+            'detail' => $this->salesDetail->load('products'),
+            'return' => $this->salesReturn->load('products')
             // 'detail' => new d_PurchasingResource($this->purchasingDetail),
         ];
     }
