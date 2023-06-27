@@ -30,11 +30,11 @@ class SalesController extends Controller
         //     ->join('customers as d', 'sales_invoice_h.customer_id', 'd.id')
         //     ->select('sales_invoice_h.*', 'b.flow_desc', 'c.loc_name', 'd.customer_name')
         //     ->paginate($request->row);
-        $data = Sales::paginate(10);
+        $data = Sales::paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             // 'first_page' => 1,
-            // 'last_page' => ceil($data->total() / $data->perPage()),
+            'last_page' => ceil($data->total() / $data->perPage()),
             'data' => SalesResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);

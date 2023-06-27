@@ -102,7 +102,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/docflow-purchasing', 'docflow');
     });
     Route::controller(SalesController::class)->group(function () {
-        Route::get('/index-sales', 'index');
+        Route::post('/index-sales', 'index');
         Route::post('/create-sales', 'create');
         Route::get('/show-sales/{id}', 'show');
         Route::post('/update-sales', 'update');
