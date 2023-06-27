@@ -67,6 +67,21 @@ class Sales extends Model
     {
         return $this->belongsTo(Location::class, 'location_id', 'id');
     }
+    // public function docflow(): BelongsTo
+    // {
+    //     return $this->belongsTo(DocFlow::class, ['5', 'doctype_id'], ['flow_seq', 'doc_flow']);
+    // }
+    // public function userRelations() {
+    //     return $this->hasMany('App\UserRelation');
+    // }
+    
+    // public function relatedUserRelations() {
+    //     return $this->hasMany('App\UserRelation', 'related_user_id');
+    // }
+    
+    // public function allUserRelations() {
+    //     return $this->userRelations->merge($this->relatedUserRelations);
+    // }
     /*
     |--------------------------------------------------------------------------
     | SCOPES
