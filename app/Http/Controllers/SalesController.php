@@ -30,7 +30,7 @@ class SalesController extends Controller
         //     ->join('customers as d', 'sales_invoice_h.customer_id', 'd.id')
         //     ->select('sales_invoice_h.*', 'b.flow_desc', 'c.loc_name', 'd.customer_name')
         //     ->paginate($request->row);
-        $data = Sales::paginate($request->row);
+        $data = Sales::where('no_header','LIKE','%'.$request->no_header.'%')->paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             // 'first_page' => 1,
