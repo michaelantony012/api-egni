@@ -74,11 +74,11 @@ class Sales extends Model
     // public function userRelations() {
     //     return $this->hasMany('App\UserRelation');
     // }
-    
+
     // public function relatedUserRelations() {
     //     return $this->hasMany('App\UserRelation', 'related_user_id');
     // }
-    
+
     // public function allUserRelations() {
     //     return $this->userRelations->merge($this->relatedUserRelations);
     // }

@@ -30,7 +30,7 @@ class SalesController extends Controller
         //     ->join('customers as d', 'sales_invoice_h.customer_id', 'd.id')
         //     ->select('sales_invoice_h.*', 'b.flow_desc', 'c.loc_name', 'd.customer_name')
         //     ->paginate($request->row);
-        $data = Sales::where('no_header','LIKE','%'.$request->no_header.'%')->paginate($request->row);
+        $data = Sales::where('no_header', 'LIKE', '%' . $request->no_header . '%')->paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             // 'first_page' => 1,
@@ -199,7 +199,8 @@ class SalesController extends Controller
         $data = Sales::findOrFail($id);
 
         return response()->json([
-            'data' => d_SalesResource::collection($data),
+            'data' => new d_SalesResource($data),
+            // 'data' => $data,
             'message' => 'Data berhasil di dapat'
         ]);
     }
@@ -274,14 +275,14 @@ class SalesController extends Controller
                     if ($update_detail) {
                         $update_detail->id_product = $update_details[$i]['id_product'];
                         $update_detail->qty = $update_details[$i]['qty'];
-                        $update_detail->keterangan = $update_details[$i]['keterangan'];
-                        $update_detail->price = $update_details[$i]['price'];
+                        // $update_detail->keterangan = $update_details[$i]['keterangan'];
+                        $update_detail->price = $update_details[$i]['products']['product_price'];
                         $update_detail->margin = $update_details[$i]['margin'];
                         $update_detail->disc_value = $update_details[$i]['disc_value'];
-                        $update_detail->total_price = $update_details[$i]['total_price'];
-                        $update_detail->vat_value = $update_details[$i]['vat_value'];
-                        $update_detail->disc_percent = $update_details[$i]['disc_percent'];
-                        $update_detail->vat_percent = $update_details[$i]['vat_percent'];
+                        $update_detail->total_price = $update_details[$i]['products']['product_price'] * $update_details[$i]['qty'] - $update_details[$i]['disc_value'];
+                        // $update_detail->vat_value = $update_details[$i]['vat_value'];
+                        // $update_detail->disc_percent = $update_details[$i]['disc_percent'];
+                        // $update_detail->vat_percent = $update_details[$i]['vat_percent'];
 
                         $update_detail->save();
                     }
@@ -324,13 +325,13 @@ class SalesController extends Controller
                         'id_header' => $request->id,
                         'id_product' => $create_details[$i]['id_product'],
                         'qty' => $create_details[$i]['qty'],
-                        'keterangan' => $create_details[$i]['keterangan'],
-                        'price' => $create_details[$i]['price'],
+                        // 'keterangan' => $create_details[$i]['keterangan'],
+                        'price' => $create_details[$i]['products']['product_price'],
                         'disc_value' => $create_details[$i]['disc_value'],
-                        'total_price' => $create_details[$i]['total_price'],
-                        'vat_value' => $create_details[$i]['vat_value'],
-                        'disc_percent' => $create_details[$i]['disc_percent'],
-                        'vat_percent' => $create_details[$i]['vat_percent'],
+                        'total_price' => $create_details[$i]['products']['product_price'] * $create_details[$i]['qty'] - $create_details[$i]['disc_value'],
+                        // 'vat_value' => $create_details[$i]['vat_value'],
+                        // 'disc_percent' => $create_details[$i]['disc_percent'],
+                        // 'vat_percent' => $create_details[$i]['vat_percent'],
                     ]);
 
                     if (!$create_detail) {
