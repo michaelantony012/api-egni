@@ -48,7 +48,7 @@ class SalesDetail extends Model
     {
         return $this->belongsTo(Sales::class, 'id_header');
     }
-    public function products(): BelongsTo
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'id_product');
     }
