@@ -276,10 +276,10 @@ class SalesController extends Controller
                         $update_detail->id_product = $update_details[$i]['id_product'];
                         $update_detail->qty = $update_details[$i]['qty'];
                         // $update_detail->keterangan = $update_details[$i]['keterangan'];
-                        $update_detail->price = $update_details[$i]['products']['product_price'];
+                        $update_detail->price = $update_details[$i]['product']['product_price'];
                         $update_detail->margin = $update_details[$i]['margin'];
                         $update_detail->disc_value = $update_details[$i]['disc_value'];
-                        $update_detail->total_price = $update_details[$i]['products']['product_price'] * $update_details[$i]['qty'] - $update_details[$i]['disc_value'];
+                        $update_detail->total_price = $update_details[$i]['product']['product_price'] * $update_details[$i]['qty'] - $update_details[$i]['disc_value'];
                         // $update_detail->vat_value = $update_details[$i]['vat_value'];
                         // $update_detail->disc_percent = $update_details[$i]['disc_percent'];
                         // $update_detail->vat_percent = $update_details[$i]['vat_percent'];
@@ -326,9 +326,9 @@ class SalesController extends Controller
                         'id_product' => $create_details[$i]['id_product'],
                         'qty' => $create_details[$i]['qty'],
                         // 'keterangan' => $create_details[$i]['keterangan'],
-                        'price' => $create_details[$i]['products']['product_price'],
+                        'price' => $create_details[$i]['product']['product_price'],
                         'disc_value' => $create_details[$i]['disc_value'],
-                        'total_price' => $create_details[$i]['products']['product_price'] * $create_details[$i]['qty'] - $create_details[$i]['disc_value'],
+                        'total_price' => $create_details[$i]['product']['product_price'] * $create_details[$i]['qty'] - $create_details[$i]['disc_value'],
                         // 'vat_value' => $create_details[$i]['vat_value'],
                         // 'disc_percent' => $create_details[$i]['disc_percent'],
                         // 'vat_percent' => $create_details[$i]['vat_percent'],
