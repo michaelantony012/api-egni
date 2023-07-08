@@ -434,7 +434,7 @@ class SalesController extends Controller
 
     public function create_return_item(Request $request)
     {
-        $check_header = Sales::where('id','=',$request->id_header)->where('flow_seq','=','10')->first();
+        $check_header = Sales::where('id','=',$request->id_header)->where('flow_seq','=','100')->first();
 
         if($check_header)
         {
@@ -457,7 +457,7 @@ class SalesController extends Controller
                 ]);
             }
         }
-        
+
         return response()->json([
             'status' => false,
             'message' => 'Status tidak sesuai, harus Recorded'
