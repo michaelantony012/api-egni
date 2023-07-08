@@ -432,7 +432,7 @@ class SalesController extends Controller
         ]);
     }
 
-    public function create_return_peritem(Request $request)
+    public function create_return_item(Request $request)
     {
         $check_header = Sales::where('id','=',$request->id_header)->where('flow_seq','=','10')->first();
 
