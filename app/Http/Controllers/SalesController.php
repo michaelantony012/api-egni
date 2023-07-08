@@ -432,6 +432,44 @@ class SalesController extends Controller
         ]);
     }
 
+    public function create_return_peritem(Request $request)
+    {
+        $check_header = Sales::where('id','=',$request->id_header)->where('flow_seq','=','10')->first();
+
+        if($check_header)
+        {
+            // dd($check_header->no_header);
+            if($check_header->no_header == "")
+            {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Belum terdapat nomor nota!'
+                ]);
+            }else {
+                $create_return = SalesReturn::create([
+                    'id_header' => $request->id_header,
+                    'id_product' => $request->id_product,
+                    'qty' => $request->qty,
+                ]);
+                return response()->json([
+                    'status' => $create_return ? true : false,
+                    'message' => $create_return ? 'Berhasil buat retur' : 'Gagal buat retur barang'
+                ]);
+            }
+        }
+        
+        return response()->json([
+            'status' => false,
+            'message' => 'Status tidak sesuai, harus Recorded'
+        ]);
+
+        $create_return = SalesReturn::create([
+            'id_header' => $request->id_header,
+            'id_product' => $request->id_product,
+            'qty' => $request->qty,
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      *

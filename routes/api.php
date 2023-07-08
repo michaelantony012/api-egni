@@ -108,6 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/update-sales', 'update');
         Route::get('/destroy-sales/{id}', 'destroy');
         Route::post('/docflow-sales', 'docflow');
+        Route::post('/create-return-peritem', 'create_return_peritem');
     });
 
     Route::controller(UserController::class)->group(function () {
