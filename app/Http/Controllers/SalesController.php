@@ -492,4 +492,32 @@ class SalesController extends Controller
 
         ]);
     }
+
+    public function postingLogTransaksi(Request $request){
+        $updbegflow1 = new DocFlowController();
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'user_id' => $request->user_id,
+                'doc_id' => $request->doc_id,
+                'flow_prev' => 1,
+                'flow_next' => 10
+            ]);
+            $updbegflow1->updateFlow($content1);
+
+            //posting
+            $content1 = new Request([
+                'doctype_id' => 5,
+                'user_id' => $request->user_id,
+                'doc_id' => $request->doc_id,
+                'flow_prev' => 10,
+                'flow_next' => 100
+            ]);
+            $updbegflow1->updateFlow($content1);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Pembayaran Sukses!'
+            ]);
+
+    }
 }

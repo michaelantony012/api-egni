@@ -109,6 +109,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/destroy-sales/{id}', 'destroy');
         Route::post('/docflow-sales', 'docflow');
         Route::post('/create-return-item', 'create_return_item');
+        Route::post('/posting-log-transaction', 'postingLogTransaksi');
+
     });
 
     Route::controller(UserController::class)->group(function () {
