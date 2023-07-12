@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/docflow-sales', 'docflow');
         Route::post('/create-return-item', 'create_return_item');
         Route::post('/posting-log-transaction', 'postingLogTransaksi');
+        Route::post('/crud-return', 'crud_return');
 
     });
 

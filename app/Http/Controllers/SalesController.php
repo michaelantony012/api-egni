@@ -217,6 +217,106 @@ class SalesController extends Controller
         //
     }
 
+    public function crud_return(Request $request)
+    {
+        DB::beginTransaction();
+        // status flow harus direvise dulu 100 -> 110 sebelum jalankan return
+        $header = Sales::where('id', '=', $request->id)->where('flow_seq', '=', 110)->where('no_header', '!=', '')->first();
+        if(collect($header)->isNotEmpty())
+        {
+            $update_returns = json_decode($request->update_return, true);
+            // $update_returns = $request->update_return;
+            if ($update_returns) {
+                
+                for ($i = 0; $i < count($update_returns); $i++) {
+                    
+                    $update_return = SalesReturn::where('id', $update_returns[$i]['id'])->first();
+                    if (collect($update_return)->isNotEmpty()) {
+                        $update_return->id_product = $update_returns[$i]['id_product'];
+                        $update_return->qty = $update_returns[$i]['qty'];
+                        $update_return->price = $update_returns[$i]['price'];
+                        $update_return->total_price = $update_returns[$i]['qty']*$update_returns[$i]['price'];
+                        $update_return->save();
+                    }
+
+                    if (!$update_return) {
+                        DB::rollBack();
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Gagal Update data return'
+                        ], 422);
+                    }
+                }
+            }
+            
+            $delete_returns = json_decode($request->delete_return, true);
+            // $delete_returns = $request->delete_return;
+            if ($delete_returns) {
+                for ($i = 0; $i < count($delete_returns); $i++) {
+                    $delete_return = SalesReturn::where('id', $delete_returns[$i]['id'])->delete();
+
+                    if (!$delete_return) {
+                        DB::rollBack();
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Gagal Delete data return'
+                        ], 422);
+                    }
+                }
+            }
+
+            $create_returns = json_decode($request->create_return, true);
+            // $create_returns = $request->create_return;
+            if ($create_returns) {
+                for ($i = 0; $i < count($create_returns); $i++) {
+                    $create_return = SalesReturn::create([
+                        'id_header' => $request->id,
+                        'id_product' => $create_returns[$i]['id_product'],
+                        'qty' => $create_returns[$i]['qty'],
+                        'price' => $create_returns[$i]['price'],
+                        'total_price' => $create_returns[$i]['qty']*$create_returns[$i]['price'],
+                    ]);
+
+                    if (!$create_return) {
+                        DB::rollBack();
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Gagal Create data return'
+                        ], 422);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            // sales invoice calculate with return
+            DB::select('call SalesInvoice_CalculateTotal(?)', array($header->id));
+
+            // auto posting 120
+            $postflow = new DocFlowController();
+            $content = new Request([
+                'doctype_id' => 5,
+                'user_id' => $request->user_id,
+                'doc_id' => $request->id,
+                'flow_prev' => 110,
+                'flow_next' => 120
+            ]);
+            $postflow->updateFlow($content);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil update/create/delete dan selesaikan return'
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                'status' => false,
+                'message' => 'Dokumen dgn status Revised tidak ditemukan'
+            ]);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -345,79 +445,6 @@ class SalesController extends Controller
             }
         }
 
-        //return
-        $update_returns = $request->update_return;
-        if ($update_returns) {
-            for ($i = 0; $i < count($update_returns); $i++) {
-
-                $update_return = SalesReturn::where('id', $update_returns[$i]['id'])->first();
-                if ($update_return) {
-                    $update_return->id_product = $update_returns[$i]['id_product'];
-                    $update_return->qty = $update_returns[$i]['qty'];
-                    $update_return->keterangan = $update_returns[$i]['keterangan'];
-                    $update_return->price = $update_returns[$i]['price'];
-                    $update_return->margin = $update_returns[$i]['margin'];
-                    $update_return->disc_value = $update_returns[$i]['disc_value'];
-                    $update_return->total_price = $update_returns[$i]['total_price'];
-                    $update_return->vat_value = $update_returns[$i]['vat_value'];
-                    $update_return->disc_percent = $update_returns[$i]['disc_percent'];
-                    $update_return->vat_percent = $update_returns[$i]['vat_percent'];
-
-                    $update_return->save();
-                }
-
-                if (!$update_detail) {
-                    DB::rollBack();
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Gagal Update data.'
-                    ], 422);
-                }
-            }
-        }
-
-        $delete_returns = $request->delete_return;
-        if ($delete_returns) {
-            for ($i = 0; $i < count($delete_returns); $i++) {
-                $delete_return = SalesReturn::where('id', $delete_returns[$i]['id'])->delete();
-
-                if (!$delete_return) {
-                    DB::rollBack();
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Gagal Delete data'
-                    ], 422);
-                }
-            }
-        }
-
-        $create_returns = $request->create_return;
-        if ($create_returns) {
-            for ($i = 0; $i < count($create_returns); $i++) {
-                $create_return = SalesReturn::create([
-                    'id_header' => $request->id,
-                    'id_product' => $create_returns[$i]['id_product'],
-                    'qty' => $create_returns[$i]['qty'],
-                    'keterangan' => $create_returns[$i]['keterangan'],
-                    'price' => $create_returns[$i]['price'],
-                    'disc_value' => $create_returns[$i]['disc_value'],
-                    'total_price' => $create_returns[$i]['total_price'],
-                    'vat_value' => $create_returns[$i]['vat_value'],
-                    'disc_percent' => $create_returns[$i]['disc_percent'],
-                    'vat_percent' => $create_returns[$i]['vat_percent'],
-                ]);
-
-                if (!$create_return) {
-                    DB::rollBack();
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Gagal Create data'
-                    ], 422);
-                }
-            }
-        }
-
-
         if (!$update_header1) {
             DB::rollBack();
         }
@@ -432,6 +459,7 @@ class SalesController extends Controller
         ]);
     }
 
+    // tidak terpakai
     public function create_return_item(Request $request)
     {
         $check_header = Sales::where('id','=',$request->id_header)->where('flow_seq','=','100')->first();
