@@ -224,8 +224,8 @@ class SalesController extends Controller
         $header = Sales::where('id', '=', $request->id)->where('flow_seq', '=', 110)->where('no_header', '!=', '')->first();
         if(collect($header)->isNotEmpty())
         {
-            $update_returns = json_decode($request->update_return, true);
-            // $update_returns = $request->update_return;
+            // $update_returns = json_decode($request->update_return, true);
+            $update_returns = $request->update_return;
             if ($update_returns) {
                 
                 for ($i = 0; $i < count($update_returns); $i++) {
@@ -249,8 +249,8 @@ class SalesController extends Controller
                 }
             }
             
-            $delete_returns = json_decode($request->delete_return, true);
-            // $delete_returns = $request->delete_return;
+            // $delete_returns = json_decode($request->delete_return, true);
+            $delete_returns = $request->delete_return;
             if ($delete_returns) {
                 for ($i = 0; $i < count($delete_returns); $i++) {
                     $delete_return = SalesReturn::where('id', $delete_returns[$i]['id'])->delete();
@@ -265,8 +265,8 @@ class SalesController extends Controller
                 }
             }
 
-            $create_returns = json_decode($request->create_return, true);
-            // $create_returns = $request->create_return;
+            // $create_returns = json_decode($request->create_return, true);
+            $create_returns = $request->create_return;
             if ($create_returns) {
                 for ($i = 0; $i < count($create_returns); $i++) {
                     $create_return = SalesReturn::create([
