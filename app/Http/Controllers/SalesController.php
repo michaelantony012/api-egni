@@ -530,7 +530,7 @@ class SalesController extends Controller
                 'flow_prev' => 1,
                 'flow_next' => 10
             ]);
-            $updbegflow1->updateFlow($content1);
+            $update = $updbegflow1->updateFlow($content1);
 
             //posting
             $content1 = new Request([
@@ -540,11 +540,11 @@ class SalesController extends Controller
                 'flow_prev' => 10,
                 'flow_next' => 100
             ]);
-            $updbegflow1->updateFlow($content1);
+            $update = $updbegflow1->updateFlow($content1);
 
             return response()->json([
-                'status' => true,
-                'message' => 'Pembayaran Sukses!'
+                'status' => $update['status'],
+                'message' => $update['status'] == false ? $update['update_log'] : 'Pembayaran Sukses!'
             ]);
 
     }
