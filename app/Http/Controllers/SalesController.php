@@ -546,6 +546,5 @@ class SalesController extends Controller
                 'status' => $update['status'],
                 'message' => $update['status'] == false ? $update['update_log'] : 'Pembayaran Sukses!'
             ]);
-
     }
 }

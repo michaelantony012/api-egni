@@ -85,4 +85,17 @@ class CashierPayoutController extends Controller
 
         ]);
     }
+
+    public function LapSaldoKasir(Request $request){
+        $saldo = DB::table('cashier_payout as a')
+                ->join('users as b','a.id_user','b.id')
+                ->select('b.name as user_name','a.cash_out as saldo_kasir')
+                ->whereRaw('DATE(a.created_at) = ?',$request->start_date)
+                ->get();
+        return response()->json([
+            'status' => collect($saldo)->isNotEmpty() ? true : false,
+            'data' => collect($saldo),
+            'message' => 'Data berhasil di dapat'
+        ]);
+    }
 }

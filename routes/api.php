@@ -143,6 +143,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/show-cashierpayout/{id_user}', 'show');
         Route::post('/update-cashierpayout', 'update');
         Route::get('/destroy-cashierpayout/{id}', 'destroy');
+        Route::post('/report-saldokasir', 'LapSaldoKasir');
     });
     Route::controller(PaymentMethodController::class)->group(function () {
         Route::get('/index-paymentmethod', 'index');
