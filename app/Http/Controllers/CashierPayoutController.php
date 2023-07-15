@@ -90,7 +90,7 @@ class CashierPayoutController extends Controller
         $saldo = DB::table('cashier_payout as a')
                 ->join('users as b','a.id_user','b.id')
                 ->select('b.name as user_name','a.cash_out as saldo_kasir')
-                ->whereRaw('DATE(a.created_at) = ?',$request->start_date)
+                ->whereRaw('DATE(a.created_at) between ? AND ?',[$request->start_date,$request->end_date])
                 ->get();
         return response()->json([
             'status' => collect($saldo)->isNotEmpty() ? true : false,
