@@ -18,6 +18,7 @@ use App\Http\Controllers\APIController;
 use App\Http\Controllers\CashierPayoutController;
 use App\Http\Controllers\PaymentLogController;
 use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -165,6 +166,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::controller(UserController::class)->group(function () {
     Route::post('/create-user', 'create');
 });
+
 Route::controller(DocFlowController::class)->group(function () {
     Route::get('/index-document', 'index');
     Route::post('/create-document', 'create');
@@ -176,4 +178,9 @@ Route::controller(DocFlowController::class)->group(function () {
     Route::post('/ueditor-document', 'updateEditor')->name('update.editor');
     Route::post('/logic-document', 'getFlowLogic');
     Route::post('/update-flow', 'updateFlow');
+});
+
+Route::controller(ReportController::class)->group(function () {
+    Route::post('/stock-keluar', 'stockKeluar');
+    Route::post('/omset', 'omset');
 });
