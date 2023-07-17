@@ -45,4 +45,17 @@ class ReportController extends Controller
             'message' => 'Data berhasil di dapat'
         ]);
     }
+
+    public function potongan(Request $request){
+        $sql = 'SELECT SUM(grandtotal) AS omset, date_header FROM sales_invoice_h a
+                WHERE flow_seq IN(110,120) AND date_header BETWEEN ? AND ?
+                GROUP BY date_header';
+        $stmt = DB::select($sql,[$request->start_date,$request->end_date]);
+
+        return response()->json([
+            'status' => collect($stmt)->isNotEmpty() ? true : false,
+            'data' => collect($stmt),
+            'message' => 'Data berhasil di dapat'
+        ]);
+    }
 }

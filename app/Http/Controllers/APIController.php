@@ -26,7 +26,8 @@ class APIController extends Controller
 
         if (!$user || !Hash::check($request->input('password'), $user->password)) {
             return response()->json([
-                'error' => 'The provided credentials are incorrect.'
+                'status' => false,
+                'message' => 'The provided credentials are incorrect.'
             ]);
         }
         // Revoke previous tokens
