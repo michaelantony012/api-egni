@@ -17,11 +17,7 @@ class APIController extends Controller
             'password' => 'required',
             'location_id' => 'required',
         ]);
-        // $add_user = User::create([
-        //     'name' => 'Andreas Christian',
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password)
-        // ]);
+
         $user = User::where('email', $request->input('email'))->first();
 
         if (!$user || !Hash::check($request->input('password'), $user->password)) {
@@ -37,7 +33,7 @@ class APIController extends Controller
 
         return response()->json([
             'status' => collect($token)->isNotEmpty() ? true : false,
-            'message' => `Login berhasil`,
+            'message' => 'Login berhasil',
             'data_user' => $user,
             'location_id' => $request->input('location_id'),
             'access_token' => $token,
