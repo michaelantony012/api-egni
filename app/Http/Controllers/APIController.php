@@ -37,7 +37,7 @@ class APIController extends Controller
 
         return response()->json([
             'status' => collect($token)->isNotEmpty() ? true : false,
-            'message' => $user ? `Login berhasil` : `Login Gagal`,
+            'message' => `Login berhasil`,
             'data_user' => $user,
             'location_id' => $request->input('location_id'),
             'access_token' => $token,
