@@ -26,13 +26,38 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // $data = Product::all();
-        $data = Product::paginate($request->row);
+        
+        // $data = Product::paginate($request->row);
+        $data = DB::table('products as a')
+                ->leftjoin('categories as b','a.category_id','b.id')
+                ->leftjoin('sub_categories as c', function($join){
+                    $join->on('a.sub_category_id','c.id')
+                         ->on('b.id','c.category_id');
+                })
+                ->leftjoin(DB::raw('(SELECT SUM(trans_qty) AS qty_stock, trans_loc, id_product
+                                        FROM inventory_journal
+                                        WHERE trans_loc = "'.$request->id_lokasi.'"
+                                        GROUP BY trans_loc, id_product 
+                                    ) as d'), 
+                function($join){
+                            $join->on('a.id','d.id_product');
+                })
+                ->leftjoin(DB::raw('(SELECT trans_cogs, id_product, trans_loc
+                                    FROM inventory_journal
+                                    WHERE trans_loc = "'.$request->id_lokasi.'"
+                                    ORDER BY trans_date DESC
+                                    LIMIT 1
+                                    ) as e'), 
+                function($join){
+                    $join->on('a.id','e.id_product');
+                })
+                ->select('a.*','b.category_name','c.sub_category_name',DB::raw('ifnull(d.qty_stock,0) as qty_stock'),DB::raw('ifnull(e.trans_cogs,0) as trans_cogs'))
+                ->paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'first_page' => 1,
             'last_page' => ceil( $data->total() / $data->perPage() ),
-            'data' => ProductResource::collection($data),
+            'data' => $data,
             'message' => 'Data berhasil di dapat'
         ]);
     }
