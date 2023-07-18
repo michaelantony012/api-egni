@@ -47,7 +47,7 @@ class ReportController extends Controller
     }
 
     public function potongan(Request $request){
-        $sql = 'SELECT SUM(grandtotal) AS omset, date_header FROM sales_invoice_h a
+        $sql = 'SELECT SUM(disc_value) AS potongan, date_header FROM sales_invoice_h a
                 WHERE flow_seq IN(110,120) AND date_header BETWEEN ? AND ?
                 GROUP BY date_header';
         $stmt = DB::select($sql,[$request->start_date,$request->end_date]);
