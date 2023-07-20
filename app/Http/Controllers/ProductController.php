@@ -26,37 +26,41 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         // $data = Product::paginate($request->row);
         $data = DB::table('products as a')
-                ->leftjoin('categories as b','a.category_id','b.id')
-                ->leftjoin('sub_categories as c', function($join){
-                    $join->on('a.sub_category_id','c.id')
-                         ->on('b.id','c.category_id');
-                })
-                ->leftjoin(DB::raw('(SELECT SUM(trans_qty) AS qty_stock, trans_loc, id_product
+            ->leftjoin('categories as b', 'a.category_id', 'b.id')
+            ->leftjoin('sub_categories as c', function ($join) {
+                $join->on('a.sub_category_id', 'c.id')
+                    ->on('b.id', 'c.category_id');
+            })
+            ->leftjoin(
+                DB::raw('(SELECT SUM(trans_qty) AS qty_stock, trans_loc, id_product
                                         FROM inventory_journal
-                                        WHERE trans_loc = "'.$request->id_lokasi.'"
-                                        GROUP BY trans_loc, id_product 
-                                    ) as d'), 
-                function($join){
-                            $join->on('a.id','d.id_product');
-                })
-                ->leftjoin(DB::raw('(SELECT trans_cogs, id_product, trans_loc
+                                        WHERE trans_loc = "' . $request->id_lokasi . '"
+                                        GROUP BY trans_loc, id_product
+                                    ) as d'),
+                function ($join) {
+                    $join->on('a.id', 'd.id_product');
+                }
+            )
+            ->leftjoin(
+                DB::raw('(SELECT trans_cogs, id_product, trans_loc
                                     FROM inventory_journal
-                                    WHERE trans_loc = "'.$request->id_lokasi.'"
+                                    WHERE trans_loc = "' . $request->id_lokasi . '"
                                     ORDER BY trans_date DESC
                                     LIMIT 1
-                                    ) as e'), 
-                function($join){
-                    $join->on('a.id','e.id_product');
-                })
-                ->select('a.*','b.category_name','c.sub_category_name',DB::raw('ifnull(d.qty_stock,0) as qty_stock'),DB::raw('ifnull(e.trans_cogs,0) as trans_cogs'))
-                ->paginate($request->row);
+                                    ) as e'),
+                function ($join) {
+                    $join->on('a.id', 'e.id_product');
+                }
+            )
+            ->select('a.*', 'b.category_name', 'c.sub_category_name', DB::raw('ifnull(d.qty_stock,0) as qty_stock'), DB::raw('ifnull(e.trans_cogs,0) as trans_cogs'))
+            ->paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'first_page' => 1,
-            'last_page' => ceil( $data->total() / $data->perPage() ),
+            'last_page' => ceil($data->total() / $data->perPage()),
             'data' => ProductResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);
@@ -75,8 +79,8 @@ class ProductController extends Controller
         // $data = DB::table('products')->where('product_code', "LIKE", '%' . $request->words . '%')->get();
         // $data = Product::where('product_code', "LIKE", '%' . $request->words . '%')
         $data = Product::where('barcode', "LIKE", '%' . $request->words . '%')
-        ->where('primary_stock', true)
-        ->get();
+            ->where('primary_stock', true)
+            ->get();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'data' => opt_ProductResource::collection($data),
@@ -91,8 +95,7 @@ class ProductController extends Controller
      */
     public function create(Request $request)
     {
-        if($request->primary_stock==0 && (!$request->join_id || $request->join_id==0 || !$request->qty_count || $request->qty_count==0))
-        {
+        if ($request->primary_stock == 0 && (!$request->join_id || $request->join_id == 0 || !$request->qty_count || $request->qty_count == 0)) {
             return response()->json([
                 'status' => false,
                 'message' => 'Non primary stock item!'
@@ -101,7 +104,8 @@ class ProductController extends Controller
         $create = Product::create($request->all());
         return response()->json([
             'status' => $create ? true : false,
-            'message' => 'Berhasil'
+            'message' => 'Berhasil',
+            'data' => $create
         ]);
     }
     /**
@@ -137,7 +141,7 @@ class ProductController extends Controller
                 // 'join_id' => $request->join_id // tidak perlu krn ini utk item non primary saja
             ]);
 
-            if($items[$i]['qty']>0){
+            if ($items[$i]['qty'] > 0) {
                 $add_beg_detail = BeginningStockDetail::create([
                     'id_header' => $add_beg_header->id,
                     'id_product' => $create_item->id,
@@ -266,7 +270,8 @@ class ProductController extends Controller
     }
 
 
-    public function stockMutationDetail(Request $request){
+    public function stockMutationDetail(Request $request)
+    {
 
         $sql = "
 
@@ -300,7 +305,7 @@ class ProductController extends Controller
         ORDER BY X.num, X.trans_date
         ";
 
-        $results = DB::select($sql,[$request->start_date,$request->id_lokasi,$request->id_lokasi,$request->start_date,$request->id_product,$request->id_product,$request->id_lokasi,$request->start_date,$request->end_date,$request->id_product]);
+        $results = DB::select($sql, [$request->start_date, $request->id_lokasi, $request->id_lokasi, $request->start_date, $request->id_product, $request->id_product, $request->id_lokasi, $request->start_date, $request->end_date, $request->id_product]);
 
         return response()->json([
             'status' => true,
@@ -308,7 +313,8 @@ class ProductController extends Controller
         ]);
     }
 
-    public function stockCardAll(Request $request){
+    public function stockCardAll(Request $request)
+    {
 
         $sql = "
 
@@ -332,7 +338,7 @@ class ProductController extends Controller
         GROUP BY id_product, product_code, product_name, trans_loc, loc_name
         ORDER BY product_name";
 
-        $results = DB::select($sql,[$request->id_lokasi,$request->start_date,$request->id_lokasi,$request->start_date,$request->end_date]);
+        $results = DB::select($sql, [$request->id_lokasi, $request->start_date, $request->id_lokasi, $request->start_date, $request->end_date]);
 
         return response()->json([
             'status' => true,
@@ -341,7 +347,8 @@ class ProductController extends Controller
     }
 
 
-    public function stockCard(Request $request){
+    public function stockCard(Request $request)
+    {
         // if($this->__validate_token($request->header('token')) !== true) {
         //     return response()->json([
         //         'status' => false,
@@ -366,7 +373,7 @@ class ProductController extends Controller
                     WHERE id_product=? AND trans_loc=? AND trans_date BETWEEN ? AND ?
                 )ax ,  (SELECT @Balance := 0) AS variableInit";
 
-        $results = DB::select($sql,[$request->id_product,$request->id_location,$start_date,$request->id_product,$request->id_location,$start_date,$end_date]);
+        $results = DB::select($sql, [$request->id_product, $request->id_location, $start_date, $request->id_product, $request->id_location, $start_date, $end_date]);
 
         // if (collect($stock_beg)->isEmpty()) {
         //     return response()->json([
@@ -379,5 +386,4 @@ class ProductController extends Controller
             'data' => $results,
         ]);
     }
-
 }
