@@ -57,7 +57,7 @@ class ProductController extends Controller
             'status' => collect($data)->isNotEmpty() ? true : false,
             'first_page' => 1,
             'last_page' => ceil( $data->total() / $data->perPage() ),
-            'data' => $data,
+            'data' => ProductResource::collection($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }
