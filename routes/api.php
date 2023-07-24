@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/get-stockcard', 'stockCard');
         Route::post('/get-stockcardall', 'stockCardAll');
         Route::post('/get-stockmutationdetail', 'stockMutationDetail');
+        Route::post('/update-statproduct','updateEnabledDisabled');
     });
     Route::controller(OutgoingController::class)->group(function () {
         Route::get('/index-outgoing', 'index');

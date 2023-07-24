@@ -386,4 +386,20 @@ class ProductController extends Controller
             'data' => $results,
         ]);
     }
+
+    public function updateEnabledDisabled(Request $request){
+        $barang = $request->update_product;
+
+        foreach($barang as $barangs){
+            $update = DB::table('products')->where('id',$barangs['id_product'])->update([
+                'is_enabled' => $request->is_enabled
+            ]);
+        }
+
+        return response()->json([
+            'status' => $update ? true : false,
+            'message' => 'Update Berhasil!'
+        ]);
+
+    }
 }
