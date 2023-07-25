@@ -364,6 +364,49 @@ class SalesController extends Controller
             // sales invoice calculate with return
             DB::select('call SalesInvoice_CalculateTotal(?)', array($header->id));
 
+            // return pengecekan qty tdk boleh minus
+            $check_return_minus = DB::select( DB::raw("
+            SELECT id_product, sales_qty, return_qty, h.product_code, h.product_name
+            FROM (
+            
+                SELECT IFNULL(a.id_product, b.id_product) AS id_product, IFNULL(a.sales_qty,0) AS sales_qty, IFNULL(b.return_qty,0) AS return_qty
+                FROM (
+                SELECT id_product, SUM(qty) AS sales_qty
+                FROM sales_invoice_d WHERE id_header=?
+                GROUP BY id_product
+                )a
+                RIGHT JOIN (
+                SELECT id_product, SUM(qty) AS return_qty
+                FROM sales_invoice_r WHERE id_header=?
+                GROUP BY id_product
+                )b ON a.id_product=b.id_product
+                UNION 
+                SELECT IFNULL(a.id_product, b.id_product) AS id_product, IFNULL(a.sales_qty,0) AS sales_qty, IFNULL(b.return_qty,0) AS return_qty
+                FROM (
+                SELECT id_product, SUM(qty) AS sales_qty
+                FROM sales_invoice_d WHERE id_header=?
+                GROUP BY id_product
+                )a
+                LEFT JOIN (
+                SELECT id_product, SUM(qty) AS return_qty
+                FROM sales_invoice_r WHERE id_header=?
+                GROUP BY id_product
+                )b ON a.id_product=b.id_product
+            )g
+            LEFT JOIN products h on g.id_product=h.id
+            WHERE sales_qty-return_qty<0
+            "), [$request->id, $request->id, $request->id, $request->id] );
+
+            // dd($check_return_minus);
+            // dd(empty($check_return_minus));
+            if(!empty($check_return_minus))
+            {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Item '.$check_return_minus[0]->product_code.'::'.$check_return_minus[0]->product_name.' return '.$check_return_minus[0]->return_qty.' melebihi qty jual '.$check_return_minus[0]->sales_qty.'!'
+                ]);
+            }
+
             // auto posting 120
             $postflow = new DocFlowController();
             $content = new Request([
