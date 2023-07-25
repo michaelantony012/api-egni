@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use App\Models\Sales;
 use App\Models\DocFlow;
 use App\Models\Product;
+use App\Models\Customer;
+use App\Models\Location;
 use App\Models\SalesDetail;
 use App\Models\SalesReturn;
 use Illuminate\Http\Request;
@@ -194,7 +196,7 @@ class SalesController extends Controller
      * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    /*public function show($id)
     {
         $data = Sales::findOrFail($id);
 
@@ -203,75 +205,70 @@ class SalesController extends Controller
             // 'data' => $data,
             'message' => 'Data berhasil di dapat'
         ]);
-    }
+    }*/
 
-    public function show_print($id)
+    public function show($id)
     {
         $result = [];
         $header = DB::select( DB::raw("
-            SELECT a.id, no_header, date_header, flow_seq, doctype_id, b.name AS USER,
-            a.location_id, c.loc_name, a.customer_id, d.customer_name,
-            is_printed, subtotal, disc_value, disc_percent, disc_percentvalue, extra_charge, dpp, vat_type, vat_percent
+            SELECT a.id, no_header, date_header, flow_seq, a.doctype_id, b.name AS user,
+            a.location_id, c.loc_name, a.customer_id, d.customer_name, e.flow_desc,
+            is_printed, subtotal, disc_value, disc_percent, disc_percentvalue, extra_charge, dpp, vat_type, vat_percent,
             vat_value, grandtotal
             FROM sales_invoice_h AS a
             INNER JOIN users b ON a.user_id=b.id
             INNER JOIN locations c ON a.location_id=c.id
             INNER JOIN customers d ON a.customer_id=d.id
+            INNER JOIN document_flow e ON a.doctype_id=e.doctype_id and a.flow_seq=e.doc_flow
 
             WHERE a.id=?
         "), [$id] );
 
-        $result = (array)$header[0];
+        $location = Location::find($header[0]->location_id);
+        $location = json_decode($location, true);
+        // dd($location);  
+        $customer = Customer::find($header[0]->customer_id);
+        $customer = json_decode($customer, true);
+        // dd($customer);  
 
-        $detail = DB::select( DB::raw("
-            SELECT 
-            IFNULL(id_product, id_product_return) AS id_product,
-            h.product_code, h.product_name,
-            IFNULL(sales_qty,0) AS sales_qty, IFNULL(return_qty,0) AS return_qty,
-            IFNULL(sales_price,0) AS sales_price, IFNULL(return_price,0) AS return_price,
-            IFNULL(sales_disc_percent,0) AS sales_disc_percent, IFNULL(sales_disc_value,0) AS sales_disc_value,
-            IFNULL(sales_total_price,0) AS sales_total_price, IFNULL(return_total_price,0) AS return_total_price
-            FROM (
-                SELECT a.id_product, b.id_product_return, a.sales_qty, b.return_qty, a.sales_price, b.return_price,
-                a.sales_disc_percent, a.sales_disc_value,
-                a.sales_total_price, b.return_total_price
-                FROM (
-                    SELECT id_product, SUM(qty) AS sales_qty, MAX(a.price) AS sales_price,
-                    MAX(disc_percent) as sales_disc_percent, MAX(disc_value) as sales_disc_value,
-                    MAX(a.total_price) AS sales_total_price
-                    FROM sales_invoice_d a WHERE id_header=? GROUP BY id_product
-                ) AS a
-                LEFT JOIN (
-                    SELECT id_product AS id_product_return, SUM(qty) AS return_qty, MAX(a.price) AS return_price,
-                    MAX(a.total_price) AS return_total_price
-                    FROM sales_invoice_r a WHERE id_header=? GROUP BY id_product
-                ) AS b
-                ON a.id_product=b.id_product_return
-            UNION
-                SELECT a.id_product, b.id_product_return, a.sales_qty, b.return_qty, a.sales_price, b.return_price,
-                a.sales_disc_percent, a.sales_disc_value,
-                a.sales_total_price, b.return_total_price
-                FROM (
-                    SELECT id_product, SUM(qty) AS sales_qty, MAX(a.price) AS sales_price,
-                    MAX(a.disc_percent) as sales_disc_percent, MAX(disc_value) as sales_disc_value,
-                    MAX(a.total_price) AS sales_total_price
-                    FROM sales_invoice_d a WHERE id_header=? GROUP BY id_product
-                ) AS a
-                RIGHT JOIN (
-                    SELECT id_product AS id_product_return, SUM(qty) AS return_qty, MAX(a.price) AS return_price,
-                    MAX(a.total_price) AS return_total_price
-                    FROM sales_invoice_r a WHERE id_header=? GROUP BY id_product
-                ) AS b
-                ON a.id_product=b.id_product_return
-            ) AS g
-            INNER JOIN products h ON IFNULL(id_product, id_product_return)=h.id
-        "), [$id, $id, $id, $id]);
+        $result = (array)$header[0];
+        $result['location'] = $location;
+        $result['customer'] = $customer;
+
+        $detail = SalesDetail::where('id_header', $id)->get();
+
+        // dd(json_decode($detail, true));
+        foreach(json_decode($detail, true) as $det)
+        {
+            // $result['detail'][] = $det;
+            $product = Product::find($det['id_product']);
+            $return_sum = DB::select( DB::raw("
+                select IFNULL(sum(qty),0) as return_qty
+                from sales_invoice_r
+                where id_header=? and id_product=?
+                group by id_product
+            "), [$id, $det['id_product']] );
+            $det['return_qty'] = $return_sum[0]->return_qty;
+            $det['product'] = $product;
+            $result['detail'][] = $det;
+        }
+
+        $return = SalesReturn::where('id_header', $id)->get();
+
+        // dd(json_decode($detail, true));
+        foreach(json_decode($return, true) as $ret)
+        {
+            // $result['detail'][] = $det;
+            $product = Product::find($ret['id_product']);
+            $ret['product'] = $product;
+            $result['return'][] = $ret;
+        }
 
         // dd($detail[1]->id_product);
-        for($x=0;$x<count($detail);$x++)
-        {
-            $result['detail'][] = (array)$detail[$x];
-        }
+        // for($x=0;$x<count($detail);$x++)
+        // {
+        //     $result['detail'][] = (array)$detail[$x];
+        // }
         // dd($result);
 
         return response()->json([
