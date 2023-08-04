@@ -159,13 +159,13 @@ class PurchasingController extends Controller
         DB::beginTransaction();
 
         // update header
-        $update_header1 = Purchasing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->first(); // chek flow sequent, status harus new entry bukan posted
+        $update_header1 = Purchasing::where('id', '=', $request->id)->whereIn('flow_seq',[1,10])->first(); // chek flow sequent, status harus new entry bukan posted
         if ($update_header1) {
             // $update_header->date_header = $request['date_header'];
             // $update_header->id_lokasi = $request['id_lokasi']; // lokasi ikut terupdate
             // $update_header->id_user = $request['id_user']; // user ikut terupdate
             // $update_header->save();
-            $update_header = Purchasing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
+            $update_header = Purchasing::where('id', '=', $request->id)->whereIn('flow_seq',[1,10])->update([
                 'date_header' => $request['date_header'],
                 'location_id' => $request['location_id'],
                 'supplier_id' => $request['supplier_id'],
