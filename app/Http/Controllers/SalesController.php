@@ -134,6 +134,35 @@ class SalesController extends Controller
         // sales invoice calculate
         DB::select('call SalesInvoice_CalculateTotal(?)', array($add_sales_header->id));
 
+        // check Stock Lack kasir --> start
+        $location_name = Location::where('id', $add_sales_header->location_id)->first();
+
+        $stock_lack = DB::select("
+        SELECT CONCAT(b.`product_name`,' Stock Kurang di lokasi ".$location_name->loc_name."','!') as description
+        FROM  sales_invoice_d a
+        INNER JOIN products b ON a.id_product=b.id
+        LEFT JOIN (
+            SELECT IFNULL(SUM(trans_qty),0) AS qty_stock, id_product 
+            FROM inventory_journal a
+            WHERE trans_date<= ".$add_sales_header->date_header." AND trans_loc= ".$add_sales_header->location_id." AND id_product=a.`id_product`
+            GROUP BY id_product
+        )c ON a.id_product=c.id_product
+        WHERE id_header=".$add_sales_header->id." AND a.qty>IFNULL(c.qty_stock,0);
+        ");
+
+        // dd($stock_lack[0]->description);
+        if($stock_lack)
+        {
+            return response()->json([
+                'status' => false,
+                'message' => $stock_lack[0]->description,
+                'is_saved' => $request->is_posting,
+                'id_header' => $add_sales_header->id, // id header document,
+                'created_at' => $add_sales_header->created_at // id header document
+            ]);
+        }
+        // check Stock Lack kasir --> end
+
         // update doc flow
         if ($request->is_posting) {
             // recording
