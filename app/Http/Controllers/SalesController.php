@@ -277,7 +277,10 @@ class SalesController extends Controller
                 where id_header=? and id_product=?
                 group by id_product
             "), [$id, $det['id_product']] );
-            $det['return_qty'] = $return_sum[0]->return_qty;
+            if($return_sum){
+                $det['return_qty'] = $return_sum[0]->return_qty;
+            }
+
             $det['product'] = $product;
             $result['detail'][] = $det;
         }

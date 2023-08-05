@@ -125,13 +125,13 @@ class OutgoingController extends Controller
         DB::beginTransaction();
 
         // update header
-        $update_header1 = Outgoing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->first(); // chek flow sequent, status harus new entry bukan posted
+        $update_header1 = Outgoing::where('id', '=', $request->id)->whereIn('flow_seq',[1,10])->first(); // chek flow sequent, status harus new entry bukan posted
         if ($update_header1) {
             // $update_header->date_header = $request['date_header'];
             // $update_header->id_lokasi = $request['id_lokasi']; // lokasi ikut terupdate
             // $update_header->id_user = $request['id_user']; // user ikut terupdate
             // $update_header->save();
-            $update_header = Outgoing::where('id', '=', $request->id)->where('flow_seq', '=', 1)->update([
+            $update_header = Outgoing::where('id', '=', $request->id)->whereIn('flow_seq',[1,10])->update([
                 // 'no_header' => $request['no_header'],
                 'location_id' => $request['location_id'],
             ]);
