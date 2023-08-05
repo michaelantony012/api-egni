@@ -164,7 +164,7 @@ class SalesController extends Controller
         // check Stock Lack kasir --> end*/
 
         // update doc flow
-        if ($request->is_posting) {
+        if ($request->is_posting == 1) {
             // recording
             $updbegflow1 = new DocFlowController();
             $content1 = new Request([
