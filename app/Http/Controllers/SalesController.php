@@ -134,7 +134,7 @@ class SalesController extends Controller
         // sales invoice calculate
         DB::select('call SalesInvoice_CalculateTotal(?)', array($add_sales_header->id));
 
-        // check Stock Lack kasir --> start
+        /*// check Stock Lack kasir --> start
         $location_name = Location::where('id', $add_sales_header->location_id)->first();
 
         $stock_lack = DB::select("
@@ -161,7 +161,7 @@ class SalesController extends Controller
                 'created_at' => $add_sales_header->created_at // id header document
             ]);
         }
-        // check Stock Lack kasir --> end
+        // check Stock Lack kasir --> end*/
 
         // update doc flow
         if ($request->is_posting) {
