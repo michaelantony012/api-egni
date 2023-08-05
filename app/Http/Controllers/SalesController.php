@@ -111,9 +111,9 @@ class SalesController extends Controller
                 'qty' => $detail[$i]['qty'],
                 // 'keterangan' => $detail[$i]['keterangan'],
                 // 'margin' => $detail[$i]['margin'],
-                'price' => $detail[$i]['product']['product_price'],
+                'price' => $detail[$i]['price'],
                 'disc_value' => $detail[$i]['disc_value'],
-                'total_price' => ($detail[$i]['qty'] * $detail[$i]['product']['product_price']) - $detail[$i]['disc_value'],
+                'total_price' => ($detail[$i]['qty'] * $detail[$i]['price']) - $detail[$i]['disc_value'],
                 'vat_value' => 0,
                 'disc_percent' => 0,
                 'vat_percent' => 0,
@@ -198,13 +198,16 @@ class SalesController extends Controller
             $updbegflow1->updateFlow($content1);
         }
 
+        $header = Sales::find($add_sales_header->id);
+
 
         return response()->json([
             'status' => true,
             'message' => 'Data berhasil ditambahkan',
             'is_saved' => $request->is_posting,
             'id_header' => $add_sales_header->id, // id header document,
-            'created_at' => $add_sales_header->created_at // id header document
+            'created_at' => $add_sales_header->created_at, // id header document
+            'no_header' => $header->no_header
         ]);
     }
 
