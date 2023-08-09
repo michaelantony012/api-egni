@@ -56,6 +56,7 @@ class ProductController extends Controller
                 }
             )
             ->select('a.*', 'b.category_name', 'c.sub_category_name', DB::raw('ifnull(d.qty_stock,0) as qty_stock'), DB::raw('ifnull(e.trans_cogs,0) as trans_cogs'))
+            ->where('primary_stock','=',$request->primary_stock)
             ->paginate($request->row);
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
