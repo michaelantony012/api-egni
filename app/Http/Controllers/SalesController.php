@@ -102,8 +102,8 @@ class SalesController extends Controller
             'grandtotal' => 0,
 
         ]);
-        $detail = $request->detail; // decode ke array dulu
-        // $detail = json_decode($request->detail, true); // decode ke array dulu
+        // $detail = $request->detail; // decode ke array dulu
+        $detail = json_decode($request->detail, true); // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_sales_detail = SalesDetail::create([
                 'id_header' => $add_sales_header->id,
@@ -111,9 +111,9 @@ class SalesController extends Controller
                 'qty' => $detail[$i]['qty'],
                 // 'keterangan' => $detail[$i]['keterangan'],
                 // 'margin' => $detail[$i]['margin'],
-                'price' => $detail[$i]['product']['product_price'],
+                'price' => $detail[$i]['price'],
                 'disc_value' => $detail[$i]['disc_value'],
-                'total_price' => ($detail[$i]['qty'] * $detail[$i]['product']['product_price']) - $detail[$i]['disc_value'],
+                'total_price' => ($detail[$i]['qty'] * $detail[$i]['price']) - $detail[$i]['disc_value'],
                 'vat_value' => 0,
                 'disc_percent' => 0,
                 'vat_percent' => 0,
@@ -185,7 +185,7 @@ class SalesController extends Controller
                 'flow_next' => 100
             ]);
             $updbegflow1->updateFlow($content1);
-        } else if (!$request->is_posting) {
+        } else {
             // recording
             $updbegflow1 = new DocFlowController();
             $content1 = new Request([
@@ -696,5 +696,19 @@ class SalesController extends Controller
                 'status' => $update['status'],
                 'message' => $update['status'] == false ? $update['update_log'] : 'Pembayaran Sukses!'
             ]);
+    }
+
+    public function report_aset_penjualan(Request $request)
+    {
+        $query = DB::select("select a.id, a.id_product, b.barcode, b.product_code, b.product_name, c.no_header, a.qty, a.price, a.total_price
+        from sales_invoice_d a
+        inner join products b on a.id_product=b.id
+        inner join sales_invoice_h c on a.id_header=c.id
+        where b.primary_stock=1 and c.flow_seq between 100 and 120 and c.date_header='".$request->date_header."'");
+
+        return response()->json([
+            'data' => $query,
+            'message' => 'Data berhasil di dapat'
+        ]);
     }
 }

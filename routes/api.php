@@ -113,6 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/create-return-item', 'create_return_item');
         Route::post('/posting-log-transaction', 'postingLogTransaksi');
         Route::post('/crud-return', 'crud_return');
+        Route::post('/report-aset-penjualan', 'report_aset_penjualan');
 
     });
 
