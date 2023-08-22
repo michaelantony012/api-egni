@@ -102,8 +102,8 @@ class SalesController extends Controller
             'grandtotal' => 0,
 
         ]);
-        // $detail = $request->detail; // decode ke array dulu
-        $detail = json_decode($request->detail, true); // decode ke array dulu
+        $detail = $request->detail; // decode ke array dulu
+        // $detail = json_decode($request->detail, true); // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_sales_detail = SalesDetail::create([
                 'id_header' => $add_sales_header->id,
@@ -142,7 +142,7 @@ class SalesController extends Controller
         FROM  sales_invoice_d a
         INNER JOIN products b ON a.id_product=b.id
         LEFT JOIN (
-            SELECT IFNULL(SUM(trans_qty),0) AS qty_stock, id_product 
+            SELECT IFNULL(SUM(trans_qty),0) AS qty_stock, id_product
             FROM inventory_journal a
             WHERE trans_date<= ".$add_sales_header->date_header." AND trans_loc= ".$add_sales_header->location_id." AND id_product=a.`id_product`
             GROUP BY id_product
@@ -258,10 +258,10 @@ class SalesController extends Controller
 
         $location = Location::find($header[0]->location_id);
         $location = json_decode($location, true);
-        // dd($location);  
+        // dd($location);
         $customer = Customer::find($header[0]->customer_id);
         $customer = json_decode($customer, true);
-        // dd($customer);  
+        // dd($customer);
 
         $result = (array)$header[0];
         $result['location'] = $location;
@@ -334,9 +334,9 @@ class SalesController extends Controller
             // $update_returns = json_decode($request->update_return, true);
             $update_returns = $request->update_return;
             if ($update_returns) {
-                
+
                 for ($i = 0; $i < count($update_returns); $i++) {
-                    
+
                     $update_return = SalesReturn::where('id', $update_returns[$i]['id'])->first();
                     if (collect($update_return)->isNotEmpty()) {
                         $update_return->id_product = $update_returns[$i]['id_product'];
@@ -355,7 +355,7 @@ class SalesController extends Controller
                     }
                 }
             }
-            
+
             // $delete_returns = json_decode($request->delete_return, true);
             $delete_returns = $request->delete_return;
             if ($delete_returns) {
@@ -403,7 +403,7 @@ class SalesController extends Controller
             $check_return_minus = DB::select( DB::raw("
             SELECT id_product, sales_qty, return_qty, h.product_code, h.product_name
             FROM (
-            
+
                 SELECT IFNULL(a.id_product, b.id_product) AS id_product, IFNULL(a.sales_qty,0) AS sales_qty, IFNULL(b.return_qty,0) AS return_qty
                 FROM (
                 SELECT id_product, SUM(qty) AS sales_qty
@@ -415,7 +415,7 @@ class SalesController extends Controller
                 FROM sales_invoice_r WHERE id_header=?
                 GROUP BY id_product
                 )b ON a.id_product=b.id_product
-                UNION 
+                UNION
                 SELECT IFNULL(a.id_product, b.id_product) AS id_product, IFNULL(a.sales_qty,0) AS sales_qty, IFNULL(b.return_qty,0) AS return_qty
                 FROM (
                 SELECT id_product, SUM(qty) AS sales_qty
