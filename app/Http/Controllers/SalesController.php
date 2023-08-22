@@ -103,7 +103,7 @@ class SalesController extends Controller
 
         ]);
         // $detail = $request->detail; // decode ke array dulu
-        $detail = json_decode($request->detail, true); // decode ke array dulu
+        $detail = $request->detail; // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_sales_detail = SalesDetail::create([
                 'id_header' => $add_sales_header->id,
@@ -111,9 +111,9 @@ class SalesController extends Controller
                 'qty' => $detail[$i]['qty'],
                 // 'keterangan' => $detail[$i]['keterangan'],
                 // 'margin' => $detail[$i]['margin'],
-                'price' => $detail[$i]['price'],
+                'price' => $detail[$i]['product']['product_price'],
                 'disc_value' => $detail[$i]['disc_value'],
-                'total_price' => ($detail[$i]['qty'] * $detail[$i]['price']) - $detail[$i]['disc_value'],
+                'total_price' => ($detail[$i]['qty'] * $detail[$i]['product']['product_price']) - $detail[$i]['disc_value'],
                 'vat_value' => 0,
                 'disc_percent' => 0,
                 'vat_percent' => 0,
