@@ -35,20 +35,22 @@ class ProductController extends Controller
                     ->on('b.id', 'c.category_id');
             })
             ->leftjoin(
-                DB::raw('(SELECT SUM(trans_qty) AS qty_stock, trans_loc, id_product
-                                        FROM inventory_journal
-                                        WHERE trans_loc = "' . $request->id_lokasi . '"
-                                        GROUP BY trans_loc, id_product
+                DB::raw('(SELECT SUM(a.trans_qty) AS qty_stock, a.trans_loc, a.id_product
+                                        FROM inventory_journal a
+                                        inner join products b on a.id_product=b.id
+                                        WHERE a.trans_loc = "' . $request->id_lokasi . '" and b.primary_stock <> 0
+                                        GROUP BY a.trans_loc, a.id_product
                                     ) as d'),
                 function ($join) {
                     $join->on('a.id', 'd.id_product');
                 }
             )
             ->leftjoin(
-                DB::raw('(SELECT trans_cogs, id_product, trans_loc
-                                    FROM inventory_journal
-                                    WHERE trans_loc = "' . $request->id_lokasi . '"
-                                    ORDER BY trans_date DESC
+                DB::raw('(SELECT a.trans_cogs, a.id_product, a.trans_loc
+                                    FROM inventory_journal a
+                                    inner join products b on a.id_product=b.id
+                                    WHERE a.trans_loc = "' . $request->id_lokasi . '" and b.primary_stock <> 0
+                                    ORDER BY a.trans_date DESC
                                     LIMIT 1
                                     ) as e'),
                 function ($join) {
