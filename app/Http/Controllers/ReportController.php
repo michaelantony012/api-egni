@@ -18,7 +18,7 @@ class ReportController extends Controller
         }
         $sqlstockkeluar = 'SELECT product_code, product_name, SUM(trans_qty) AS stock_keluar, trans_date, doctype_id FROM inventory_journal a
                 INNER JOIN products b ON a.`id_product`=b.`id`
-                WHERE trans_date = ? AND doctype_id IN(2,5) and (a.id_product=? or 0=?) and trans_loc = ?
+                WHERE trans_date = ? AND doctype_id=2 and (a.id_product=? or 0=?) and trans_loc = ?
                 GROUP BY product_code, trans_date, doctype_id, product_name
                 UNION ALL
                 SELECT product_code, product_name, SUM(trans_qty) AS stock_keluar, trans_date, doctype_id FROM inventory_journal a
