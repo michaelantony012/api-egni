@@ -1,26 +1,27 @@
 <?php
 
-use App\Http\Controllers\AdjustmentController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DocFlowController;
-use App\Http\Controllers\LocationController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\PurchasingController;
-use App\Http\Controllers\SubCategoryController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\DocumentFlowController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\OutgoingController;
-use App\Http\Controllers\BeginningStockController;
-use App\Http\Controllers\SalesController;
-use App\Http\Controllers\APIController;
-use App\Http\Controllers\CashierPayoutController;
-use App\Http\Controllers\PaymentLogController;
-use App\Http\Controllers\PaymentMethodController;
-use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\APIController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\OtherController;
+use App\Http\Controllers\SalesController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DocFlowController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\OutgoingController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\AdjustmentController;
+use App\Http\Controllers\PaymentLogController;
+use App\Http\Controllers\PurchasingController;
+use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\DocumentFlowController;
+use App\Http\Controllers\CashierPayoutController;
+use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\BeginningStockController;
 
 /*
 |--------------------------------------------------------------------------
@@ -161,6 +162,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/show-paymentlog/{id}', 'show');
         Route::post('/update-paymentlog', 'update');
         Route::get('/destroy-paymentlog/{id}', 'destroy');
+    });
+    Route::controller(OtherController::class)->group(function () {
+        Route::get('/get-province', 'provinces');
+        Route::get('/get-regency/{province_id}', 'regencies');
+        Route::get('/get-district/{regency_id}', 'districts');
     });
 });
 
