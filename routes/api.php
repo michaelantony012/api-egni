@@ -164,9 +164,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/destroy-paymentlog/{id}', 'destroy');
     });
     Route::controller(OtherController::class)->group(function () {
-        Route::get('/get-province', 'provinces');
-        Route::get('/get-regency/{province_id}', 'regencies');
-        Route::get('/get-district/{regency_id}', 'districts');
+        Route::get('/index-province', 'provinces');
+        Route::get('/index-regency/{province_id}', 'regencies');
+        Route::get('/index-district/{regency_id}', 'districts');
     });
 });
 
