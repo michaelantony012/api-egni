@@ -26,7 +26,8 @@ class OtherController extends Controller
     }
     public function regencies($province_id)
     {
-        $data = Regency::where('province_id', $province_id)->get();
+        // $data = Regency::where('province_id', $province_id)->get();
+        $data = Regency::all();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'province_id' => $province_id,
@@ -36,7 +37,8 @@ class OtherController extends Controller
     }
     public function districts($regency_id)
     {
-        $data = District::where('regency_id', $regency_id)->get();
+        // $data = District::where('regency_id', $regency_id)->get();
+        $data = District::all();
         return response()->json([
             'status' => collect($data)->isNotEmpty() ? true : false,
             'regency_id' => $regency_id,

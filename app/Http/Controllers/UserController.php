@@ -62,9 +62,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $data = Supplier::findOrFail($id);
+        $data = User::findOrFail($id);
         return response()->json([
-            'data' => new SupplierResource($data),
+            'data' => new UserResource($data),
             'message' => 'Data berhasil di dapat'
         ]);
     }

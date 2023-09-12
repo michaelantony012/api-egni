@@ -172,7 +172,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 Route::controller(UserController::class)->group(function () {
+    Route::get('/index-user', 'index');
     Route::post('/create-user', 'create');
+    Route::post('/show-user/{id}', 'show');
+    Route::post('/update-user', 'update');
 });
 
 Route::controller(DocFlowController::class)->group(function () {
