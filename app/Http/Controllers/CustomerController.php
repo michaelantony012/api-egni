@@ -43,7 +43,16 @@ class CustomerController extends Controller
      */
     public function create(Request $request)
     {
-        $create = Customer::create($request->all());
+        // $create = Customer::create($request->all());
+        $create = Customer::create([
+            'customer_name' => $request->customer_name,
+            'customer_contact' => $request->customer_contact,
+            'customer_address' => $request->customer_address,
+            'province_id' => $request->province_id,
+            'regency_id' => $request->regency_id,
+            'district_id' => $request->district_id,
+            'postal_code' => $request->postal_code,
+        ]);
         return response()->json([
             'status' => $create ? true : false,
             'data' => $create,
@@ -102,6 +111,10 @@ class CustomerController extends Controller
                 'customer_name' => $request->customer_name,
                 'customer_contact' => $request->customer_contact,
                 'customer_address' => $request->customer_address,
+                'province_id' => $request->province_id,
+                'regency_id' => $request->regency_id,
+                'district_id' => $request->district_id,
+                'postal_code' => $request->postal_code,
             ]);
 
         return response()->json([
