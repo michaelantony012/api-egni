@@ -167,6 +167,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/index-province', 'provinces');
         Route::get('/index-regency/{province_id}', 'regencies');
         Route::get('/index-district/{regency_id}', 'districts');
+        Route::get('/index-village/{district_id}', 'villages');
     });
 });
 
