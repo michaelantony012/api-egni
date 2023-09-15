@@ -90,6 +90,8 @@ class SalesController extends Controller
             // 'disc_percentvalue' => $request->disc_percentvalue,
             'disc_percentvalue' => 0,
             'extra_charge' => $request->extra_charge,
+            'edc_id' => $request->edc_id,
+            'edc_charge_percentage' => $request->edc_charge_percentage,
             // 'dpp' => $request->dpp, // dicalculate dibawah
             // 'vat_type' => $request->vat_type, // ppn belum kepake
             // 'vat_percent' => $request->vat_percent,
@@ -103,6 +105,7 @@ class SalesController extends Controller
 
         ]);
         // $detail = $request->detail; // decode ke array dulu
+        // $detail = json_decode($request->detail, true);
         $detail = $request->detail; // decode ke array dulu
         for ($i = 0; $i < count($detail); $i++) {
             $add_sales_detail = SalesDetail::create([
@@ -496,6 +499,8 @@ class SalesController extends Controller
                 // 'disc_percentvalue' => $request['disc_percentvalue'],
                 'disc_percentvalue' => 0,
                 'extra_charge' => $request['extra_charge'],
+                'edc_id' => $request['edc_id'],
+                'edc_charge_percentage' => $request['edc_charge_percentage'],
                 // 'dpp' => $request['dpp'], // dicalculate di bawah
                 // 'vat_type' => $request['vat_type'], // ppn blm kepake
                 // 'vat_percent' => $request['vat_percent'],

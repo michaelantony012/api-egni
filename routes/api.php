@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
+use App\Http\Controllers\EDCController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OtherController;
 use App\Http\Controllers\SalesController;
@@ -168,6 +169,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/index-regency/{province_id}', 'regencies');
         Route::get('/index-district/{regency_id}', 'districts');
         Route::get('/index-village/{district_id}', 'villages');
+    });
+    Route::controller(EDCController::class)->group(function () {
+        Route::get('/index-edc', 'index');
+        Route::post('/create-edc', 'create');
+        Route::get('/show-edc/{id}', 'show');
+        Route::post('/update-edc', 'update');
+        Route::get('/destroy-edc/{id}', 'destroy');
+        Route::post('/report-edc', 'report');
     });
 });
 
