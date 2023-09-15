@@ -23,6 +23,7 @@ use App\Http\Controllers\DocumentFlowController;
 use App\Http\Controllers\CashierPayoutController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\BeginningStockController;
+use App\Http\Controllers\KaryawanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -177,6 +178,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/update-edc', 'update');
         Route::get('/destroy-edc/{id}', 'destroy');
         Route::post('/report-edc', 'report');
+    });
+
+    Route::controller(KaryawanController::class)->group(function () {
+        Route::get('/index-karyawan', 'index');
+        Route::post('/create-karyawan', 'create');
+        Route::get('/show-karyawan/{id}', 'show');
+        Route::post('/update-karyawan', 'update');
+        Route::get('/destroy-karyawan/{id}', 'destroy');
     });
 });
 
