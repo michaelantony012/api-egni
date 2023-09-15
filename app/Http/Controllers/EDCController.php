@@ -86,10 +86,11 @@ class EDCController extends Controller
     }
 
     public function Report(Request $request){
-        $saldo = DB::table('cashier_payout as a')
-                ->join('users as b','a.id_user','b.id')
-                ->select('b.name as user_name','a.cash_out as saldo_kasir',DB::raw('DATE(a.created_at) as tanggal_saldo'))
-                ->whereRaw('DATE(a.created_at) between ? AND ?',[$request->start_date,$request->end_date])
+        $saldo = DB::table('sales_invoice_h as a')
+                ->select(DB::raw('IFNULL(SUM(a.edc_charge_nominal),0) AS edc_nominal'))
+                ->whereRaw('a.edc_charge_nominal>0
+                and a.flow_seq between 100 and 120
+                and year(a.date_header)=? and month(a.date_header)=?',[$request->year,$request->month])
                 ->get();
         return response()->json([
             'status' => collect($saldo)->isNotEmpty() ? true : false,
