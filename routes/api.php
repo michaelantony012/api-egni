@@ -215,4 +215,5 @@ Route::controller(ReportController::class)->group(function () {
     // Route::post('/omset', 'omset');
     Route::post('/reportdashboard', 'reportdashboard');
     Route::post('/reportdashboard2', 'reportdashboard2');
+    Route::post('/reportdashboard3', 'reportdashboard3');
 });
