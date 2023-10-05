@@ -91,7 +91,7 @@ class SalesController extends Controller
             'disc_percentvalue' => 0,
             'extra_charge' => $request->extra_charge,
             'edc_id' => $request->edc_id,
-            'edc_charge_percentage' => $request->edc_charge_percentage,
+            'edc_charge_percentage' => $request->edc_charge_percentage?$request->edc_charge_percentage:0,
             // 'dpp' => $request->dpp, // dicalculate dibawah
             // 'vat_type' => $request->vat_type, // ppn belum kepake
             // 'vat_percent' => $request->vat_percent,
@@ -500,7 +500,7 @@ class SalesController extends Controller
                 'disc_percentvalue' => 0,
                 'extra_charge' => $request['extra_charge'],
                 'edc_id' => $request['edc_id'],
-                'edc_charge_percentage' => $request['edc_charge_percentage'],
+                'edc_charge_percentage' => $request['edc_charge_percentage']?$request['edc_charge_percentage']:0,
                 // 'dpp' => $request['dpp'], // dicalculate di bawah
                 // 'vat_type' => $request['vat_type'], // ppn blm kepake
                 // 'vat_percent' => $request['vat_percent'],
