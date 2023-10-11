@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -178,10 +179,27 @@ class ReportController extends Controller
                 GROUP BY date_header
                 HAVING SUM(disc_value)>0';
         $potongan = DB::select($sqlpot,[$request->start_date, $request->end_date, $request->id_lokasi]);
-
-        
         
         $newArray['potongan'] = $potongan;
+
+         //aset
+         $sqlaset = 'SELECT SUM(product_price*stock) AS aset, trans_loc, loc_name
+         FROM products a
+         INNER JOIN (
+             SELECT SUM(trans_qty) AS stock,id_product,trans_loc
+             FROM inventory_journal 
+             WHERE trans_date <= ? and trans_loc = ?
+             GROUP BY id_product, trans_loc
+             
+         )b ON a.id=b.id_product
+         INNER JOIN locations c ON b.trans_loc=c.id
+         WHERE a.primary_stock=1
+         GROUP BY trans_loc, loc_name
+        ';
+        $datenow = Carbon::now();
+        $aset = DB::select($sqlaset,[$datenow, $request->id_lokasi]);
+
+        $newArray['asetperloc'] = $aset;
 
         return response()->json([
             'status' => collect($newArray)->isNotEmpty() ? true : false,
